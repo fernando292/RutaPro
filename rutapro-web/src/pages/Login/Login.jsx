@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
 import "./Login.css";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +26,7 @@ function Login() {
 
       await login(email, password);
 
-      alert("Inicio de sesión correcto");
+      navigate("/dashboard");
 
     } catch (err) {
       setError("Correo o contraseña incorrectos.");
@@ -36,7 +39,9 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
 
-        <h1>Ruta<span>Pro</span></h1>
+        <h1>
+          Ruta<span>Pro</span>
+        </h1>
 
         <p>Inicia sesión para continuar</p>
 
@@ -56,9 +61,7 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {error && (
-            <p className="error">{error}</p>
-          )}
+          {error && <p className="error">{error}</p>}
 
           <button
             type="submit"
