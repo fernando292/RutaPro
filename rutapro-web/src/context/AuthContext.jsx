@@ -18,7 +18,7 @@ import {
 
 import {
   getUserProfile
-} from "../services/userService";
+} from "../services/user/userService";
 
 
 

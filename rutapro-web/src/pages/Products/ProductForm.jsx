@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   addProduct,
   updateProduct
-} from "../../services/productService";
+} from "../../services/products/productService";
 
 import "./ProductForm.css";
 
@@ -123,12 +123,18 @@ function ProductForm({
       } else {
 
 
+        console.log("ENVIANDO PRODUCTO:", {
+          productData,
+          companyId: profile.companyId
+        });
+
+
         await addProduct(
 
           productData,
 
           profile.companyId
-          
+
         );
 
 

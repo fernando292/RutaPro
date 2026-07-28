@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
-import { logout } from "../../services/authService";
+import { logout } from "../../services/auth/authService";
 
 import "./Sidebar.css";
 

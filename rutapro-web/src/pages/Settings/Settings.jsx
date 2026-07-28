@@ -7,7 +7,7 @@ import {
   getCompany,
   addCompany,
   updateCompany
-} from "../../services/companyService";
+} from "../../services/companies/companyService";
 
 
 import "./Settings.css";

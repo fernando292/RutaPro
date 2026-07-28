@@ -19,7 +19,7 @@ import ProductForm from "./ProductForm";
 import {
   getProducts,
   deleteProduct
-} from "../../services/productService";
+} from "../../services/products/productService";
 
 import "./Products.css";
 

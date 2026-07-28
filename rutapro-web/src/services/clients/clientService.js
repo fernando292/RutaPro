@@ -3,28 +3,28 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
-  doc,
   updateDoc,
+  doc,
   query,
   where,
 } from "firebase/firestore";
 
-import { db } from "../config/firebase";
+import { db } from "../../config/firebase";
 
-const productsCollection = collection(
+const clientsCollection = collection(
   db,
-  "products"
+  "clients"
 );
 
 
 
-// Obtener productos de la empresa
+// Obtener clientes de la empresa
 
-export const getProducts = async (companyId) => {
+export const getClients = async (companyId) => {
 
   const q = query(
 
-    productsCollection,
+    clientsCollection,
 
     where(
       "companyId",
@@ -49,11 +49,12 @@ export const getProducts = async (companyId) => {
 
 
 
-// Crear producto
 
-export const addProduct = async (
+// Crear cliente
 
-  product,
+export const addClient = async (
+
+  client,
   companyId
 
 ) => {
@@ -62,11 +63,11 @@ export const addProduct = async (
 
     const response = await addDoc(
 
-      productsCollection,
+      clientsCollection,
 
       {
 
-        ...product,
+        ...client,
 
         companyId,
 
@@ -75,7 +76,7 @@ export const addProduct = async (
     );
 
     console.log(
-      "Producto creado:",
+      "Cliente creado:",
       response.id
     );
 
@@ -97,20 +98,21 @@ export const addProduct = async (
 
 
 
-// Actualizar producto
 
-export const updateProduct = async (
+// Actualizar cliente
+
+export const updateClient = async (
 
   id,
-  product
+  client
 
 ) => {
 
-  const productRef = doc(
+  const clientRef = doc(
 
     db,
 
-    "products",
+    "clients",
 
     id
 
@@ -118,9 +120,9 @@ export const updateProduct = async (
 
   return await updateDoc(
 
-    productRef,
+    clientRef,
 
-    product
+    client
 
   );
 
@@ -129,15 +131,16 @@ export const updateProduct = async (
 
 
 
-// Eliminar producto
 
-export const deleteProduct = async (id) => {
+// Eliminar cliente
 
-  const productRef = doc(
+export const deleteClient = async (id) => {
+
+  const clientRef = doc(
 
     db,
 
-    "products",
+    "clients",
 
     id
 
@@ -145,7 +148,7 @@ export const deleteProduct = async (id) => {
 
   return await deleteDoc(
 
-    productRef
+    clientRef
 
   );
 

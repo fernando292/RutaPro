@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   addClient,
   updateClient
-} from "../../services/clientService";
+} from "../../services/clients/clientService";
 
 import "./ClientForm.css";
 

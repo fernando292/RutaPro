@@ -14,7 +14,7 @@ import OrderDetail from "./OrderDetail";
 import {
   getOrders,
   deleteOrder
-} from "../../services/orderService";
+} from "../../services/orders/orderService";
 
 import { useAuth } from "../../context/AuthContext";
 

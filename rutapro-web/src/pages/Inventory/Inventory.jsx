@@ -5,57 +5,71 @@ import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 
-import { getProducts } from "../../services/productService";
+import {
+  getInventoryMovements
+} from "../../services/inventory/inventoryService";
 
 import "./Inventory.css";
 
 
-function Inventory() {
+
+function InventoryMovements() {
+
 
   const { profile } = useAuth();
 
-  console.log("EMPRESA INVENTARIO:", profile);
 
-  const [products, setProducts] = useState([]);
+  const [movements, setMovements] = useState([]);
 
 
   const [loading, setLoading] = useState(true);
 
 
 
+
+
   useEffect(() => {
 
-    if (profile && profile.companyId) {
-      loadInventory();
 
-    } 
+    if (profile?.companyId) {
+
+      loadMovements();
+
+    }
+
 
   }, [profile?.companyId]);
 
 
 
 
-  const loadInventory = async () => {
+
+
+  const loadMovements = async () => {
 
 
     try {
 
 
-      const data = await getProducts(
+      const data = await getInventoryMovements(
+
         profile.companyId
-       );
+
+      );
 
 
-      setProducts(data);
+      setMovements(data);
 
 
-
-    } catch(error) {
+    } catch (error) {
 
 
       console.error(
-        "Error cargando inventario:",
+
+        "Error cargando movimientos:",
+
         error
+
       );
 
 
@@ -74,42 +88,22 @@ function Inventory() {
 
 
 
-  const getStockStatus = (stock) => {
+
+  const formatDate = (timestamp) => {
 
 
-    if (stock === 0) {
+    if (!timestamp?.seconds) {
 
-
-      return {
-        text: "Agotado",
-        className: "stock-danger"
-      };
-
+      return "Sin fecha";
 
     }
 
 
-    if (stock <= 10) {
+    return new Date(
 
+      timestamp.seconds * 1000
 
-      return {
-        text: "Stock bajo",
-        className: "stock-warning"
-      };
-
-
-    }
-
-
-
-    return {
-
-      text: "Disponible",
-
-      className: "stock-success"
-
-    };
-
+    ).toLocaleDateString("es-CO");
 
   };
 
@@ -117,7 +111,11 @@ function Inventory() {
 
 
 
+
+
+
   return (
+
 
     <div className="dashboard-layout">
 
@@ -139,16 +137,18 @@ function Inventory() {
 
             <div>
 
-
               <h1>
-                Inventario
+
+                Movimientos de Inventario
+
               </h1>
 
 
               <p>
-                Controla las existencias de tus productos.
-              </p>
 
+                Historial de entradas y salidas de productos.
+
+              </p>
 
             </div>
 
@@ -164,12 +164,12 @@ function Inventory() {
             loading ? (
 
               <p>
-                Cargando inventario...
+
+                Cargando movimientos...
+
               </p>
 
-
             ) : (
-
 
               <div className="inventory-table-container">
 
@@ -179,30 +179,55 @@ function Inventory() {
 
                   <thead>
 
+
                     <tr>
 
                       <th>
+
+                        Fecha
+
+                      </th>
+
+
+                      <th>
+
                         Producto
+
                       </th>
 
 
                       <th>
-                        Categoría
+
+                        Tipo
+
                       </th>
 
 
                       <th>
-                        Precio
+
+                        Cantidad
+
                       </th>
 
 
                       <th>
-                        Stock
+
+                        Stock anterior
+
                       </th>
 
 
                       <th>
-                        Estado
+
+                        Stock nuevo
+
+                      </th>
+
+
+                      <th>
+
+                        Motivo
+
                       </th>
 
 
@@ -212,74 +237,112 @@ function Inventory() {
                   </thead>
 
 
-
-
-
                   <tbody>
 
 
                     {
 
+                      movements.length === 0 ? (
 
-                      products.map((product) => {
+                        <tr>
 
+                          <td colSpan="7">
 
-                        const status = getStockStatus(
+                            No hay movimientos registrados.
 
-                          Number(product.stock)
+                          </td>
 
-                        );
+                        </tr>
 
+                      ) : (
 
+                        movements.map((movement) => (
 
-                        return (
-
-
-                          <tr key={product.id}>
-
-
-                            <td>
-                              {product.name}
-                            </td>
-
-
-                            <td>
-                              {product.category}
-                            </td>
+                          <tr key={movement.id}>
 
 
                             <td>
 
-                              ${Number(product.price).toLocaleString("es-CO")}
+                              {formatDate(
+
+                                movement.createdAt
+
+                              )}
 
                             </td>
 
 
                             <td>
-                              {product.stock}
+
+                              {movement.productName}
+
                             </td>
 
 
                             <td>
 
-                              <span className={status.className}>
+                              <span
 
-                                {status.text}
+                                className={
+
+                                  movement.type === "ENTRADA"
+
+                                    ? "stock-success"
+
+                                    : "stock-danger"
+
+                                }
+
+                              >
+
+                                {
+
+                                  movement.type === "ENTRADA"
+
+                                    ? "Entrada"
+
+                                    : "Salida"
+
+                                }
 
                               </span>
 
+                            </td>
+
+
+                            <td>
+
+                              {movement.quantity}
+
+                            </td>
+
+
+                            <td>
+
+                              {movement.previousStock}
+
+                            </td>
+
+
+                            <td>
+
+                              {movement.newStock}
+
+                            </td>
+
+
+                            <td>
+
+                              {movement.reason}
 
                             </td>
 
 
                           </tr>
 
+                        ))
 
-                        );
-
-
-                      })
-
+                      )
 
                     }
 
@@ -287,15 +350,12 @@ function Inventory() {
                   </tbody>
 
 
-
                 </table>
 
 
               </div>
 
-
             )
-
 
           }
 
@@ -308,10 +368,9 @@ function Inventory() {
 
     </div>
 
-
   );
 
 }
 
 
-export default Inventory;
+export default InventoryMovements;

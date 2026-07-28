@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import {
-  Pencil,
-  Trash2
-} from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 
 import Table from "../../components/ui/Table/Table";
-import Modal from "../../components/ui/Modal/Modal";
 import ButtonIcon from "../../components/ui/ButtonIcon/ButtonIcon";
+import Modal from "../../components/ui/Modal/Modal";
 
 import ClientForm from "./ClientForm";
 
 import {
   getClients,
   deleteClient
-} from "../../services/clientService";
+} from "../../services/clients/clientService";
+
+import { useAuth } from "../../context/AuthContext";
 
 import "./Clients.css";
 
@@ -27,7 +25,6 @@ function Clients() {
 
   const { profile } = useAuth();
 
-  console.log("EMPRESA CLIENTES:", profile);
 
   const [clients, setClients] = useState([]);
 
@@ -40,10 +37,12 @@ function Clients() {
 
 
 
+
   useEffect(() => {
 
-  if (profile?.companyId) {
-    loadClients();
+    if (profile?.companyId) {
+
+      loadClients();
 
     }
 
@@ -51,16 +50,24 @@ function Clients() {
 
 
 
+
+
+
   const loadClients = async () => {
 
     try {
 
-      const data = await getClients(profile.companyId);
+
+      const data = await getClients(
+        profile.companyId
+      );
+
 
       setClients(data);
 
 
     } catch(error) {
+
 
       console.error(
         "Error cargando clientes:",
@@ -70,7 +77,9 @@ function Clients() {
 
     } finally {
 
+
       setLoading(false);
+
 
     }
 
@@ -98,17 +107,16 @@ function Clients() {
 
 
 
+
   const handleDelete = async (id) => {
 
 
     const confirmDelete = window.confirm(
-      "¿Seguro que deseas eliminar este cliente?"
+      "¿Deseas eliminar este cliente?"
     );
 
 
-
     if (!confirmDelete) return;
-
 
 
 
@@ -142,7 +150,6 @@ function Clients() {
 
 
 
-
   const columns = [
 
 
@@ -159,20 +166,14 @@ function Clients() {
 
 
     {
-      key: "email",
-      label: "Correo"
+      key: "address",
+      label: "Dirección"
     },
 
 
     {
-      key: "city",
-      label: "Ciudad"
-    },
-
-
-    {
-      key: "status",
-      label: "Estado"
+      key: "createdAt",
+      label: "Fecha"
     }
 
 
@@ -184,9 +185,7 @@ function Clients() {
 
 
 
-
   return (
-
 
     <div className="dashboard-layout">
 
@@ -209,7 +208,6 @@ function Clients() {
           <div className="clients-header">
 
 
-
             <div>
 
               <h1>
@@ -218,13 +216,11 @@ function Clients() {
 
 
               <p>
-                Administra los clientes registrados.
+                Gestiona los clientes de tu empresa.
               </p>
 
 
             </div>
-
-
 
 
 
@@ -250,7 +246,6 @@ function Clients() {
 
 
 
-
           </div>
 
 
@@ -258,10 +253,7 @@ function Clients() {
 
 
 
-
-
           {
-
 
             loading ? (
 
@@ -275,6 +267,7 @@ function Clients() {
             ) : (
 
 
+
               <Table
 
 
@@ -285,24 +278,34 @@ function Clients() {
 
 
 
-
                 actions={(client) => (
 
 
-                  <>
+
+                  <div
+
+                    style={{
+
+                      display:"flex",
+
+                      gap:"10px"
+
+                    }}
+
+                  >
+
 
 
 
                     <ButtonIcon
 
 
-                      icon={<Pencil size={18}/>}
+                      icon={
+                        <Eye size={18}/>
+                      }
 
 
-                      type="edit"
-
-
-                      title="Editar"
+                      title="Ver cliente"
 
 
 
@@ -311,9 +314,7 @@ function Clients() {
 
                         setSelectedClient(client);
 
-
                         setOpenModal(true);
-
 
 
                       }}
@@ -329,10 +330,14 @@ function Clients() {
                     <ButtonIcon
 
 
-                      icon={<Trash2 size={18}/>}
+                      icon={
+                        <Trash2 size={18}/>
+                      }
+
 
 
                       type="delete"
+
 
 
                       title="Eliminar"
@@ -340,21 +345,22 @@ function Clients() {
 
 
                       onClick={() =>
-
                         handleDelete(client.id)
-
                       }
+
 
 
                     />
 
 
 
-                  </>
+
+                  </div>
 
 
 
                 )}
+
 
 
               />
@@ -398,11 +404,11 @@ function Clients() {
 
           setOpenModal(false);
 
-
           setSelectedClient(null);
 
 
         }}
+
 
 
       >
@@ -410,16 +416,54 @@ function Clients() {
 
 
 
-        <ClientForm
+        {
+
+          selectedClient ? (
 
 
-          client={selectedClient}
+            <div>
+
+              <h2>
+                Detalle del cliente
+              </h2>
 
 
-          onSuccess={handleSuccess}
+              <p>
+                Nombre: {selectedClient.name}
+              </p>
 
 
-        />
+              <p>
+                Teléfono: {selectedClient.phone}
+              </p>
+
+
+              <p>
+                Dirección: {selectedClient.address}
+              </p>
+
+
+            </div>
+
+
+
+          ) : (
+
+
+            <ClientForm
+
+              onSuccess={handleSuccess}
+
+            />
+
+
+          )
+
+
+
+        }
+
+
 
 
 
@@ -435,8 +479,8 @@ function Clients() {
 
   );
 
-
 }
+
 
 
 export default Clients;

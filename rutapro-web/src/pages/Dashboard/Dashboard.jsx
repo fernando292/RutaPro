@@ -13,19 +13,20 @@ import Topbar from "../../components/dashboard/Topbar";
 import StatCard from "../../components/dashboard/StatCard";
 
 
-import { getOrders } from "../../services/orderService";
-import { getClients } from "../../services/clientService";
+import { getOrders } from "../../services/orders/orderService";
+import { getClients } from "../../services/clients/clientService";
 import { useAuth } from "../../context/AuthContext";
 
 
 import "./Dashboard.css";
 
 
-  function Dashboard() {
+
+function Dashboard() {
+
 
   const { profile } = useAuth();
 
-  console.log("PERFIL USUARIO:", profile);
 
 
   const [stats, setStats] = useState({
@@ -42,27 +43,46 @@ import "./Dashboard.css";
 
 
 
+
+
   useEffect(() => {
 
-    if (profile?.companyId) {
-    loadDashboard();
+
+    if(profile?.companyId){
+
+      loadDashboard();
+
     }
 
-  }, [profile?.companyId]);
+
+  },[profile?.companyId]);
 
 
 
 
 
-  const loadDashboard = async () => {
+
+  const loadDashboard = async()=>{
 
 
-    try {
+    try{
 
 
-      const orders = await getOrders(profile.companyId);
+      console.log(
+        "Cargando dashboard empresa:",
+        profile.companyId
+      );
 
-      const clients = await getClients();
+
+
+      const orders = await getOrders(
+        profile.companyId
+      );
+
+
+      const clients = await getClients(
+        profile.companyId
+      );
 
 
 
@@ -70,24 +90,51 @@ import "./Dashboard.css";
 
 
 
-      const todayOrders = orders.filter((order) => {
+      const todayOrders = orders.filter(order=>{
 
 
-        if (!order.createdAt?.seconds) return false;
+        let orderDate;
 
 
-        const orderDate = new Date(
 
-          order.createdAt.seconds * 1000
+        if(order.createdAt?.seconds){
 
-        );
+
+          orderDate = new Date(
+            order.createdAt.seconds * 1000
+          );
+
+
+        }
+
+        else if(order.createdAt){
+
+
+          orderDate = new Date(
+            order.createdAt
+          );
+
+
+        }
+
+        else{
+
+          return false;
+
+        }
+
+
 
 
         return (
 
-          orderDate.getDate() === today.getDate() &&
+          orderDate.getDate() === today.getDate()
 
-          orderDate.getMonth() === today.getMonth() &&
+          &&
+
+          orderDate.getMonth() === today.getMonth()
+
+          &&
 
           orderDate.getFullYear() === today.getFullYear()
 
@@ -101,13 +148,19 @@ import "./Dashboard.css";
 
 
 
-      const pendingDeliveries = orders.filter((order) =>
+      const pendingDeliveries = orders.filter(order=>
 
-        order.status === "Pendiente" ||
 
-        order.status === "Preparando" ||
+        order.status === "Pendiente"
+
+        ||
+
+        order.status === "Preparando"
+
+        ||
 
         order.status === "En ruta"
+
 
       );
 
@@ -115,11 +168,18 @@ import "./Dashboard.css";
 
 
 
+
       const todaySales = todayOrders.reduce(
 
-        (total, order) =>
+        (total,order)=>{
 
-          total + Number(order.total || 0),
+
+          return total + Number(
+            order.total || 0
+          );
+
+
+        },
 
         0
 
@@ -129,16 +189,20 @@ import "./Dashboard.css";
 
 
 
+
       setStats({
 
 
-        todayOrders: todayOrders.length,
+        todayOrders:
+          todayOrders.length,
 
 
-        activeClients: clients.length,
+        activeClients:
+          clients.length,
 
 
-        pendingDeliveries: pendingDeliveries.length,
+        pendingDeliveries:
+          pendingDeliveries.length,
 
 
         todaySales
@@ -150,15 +214,12 @@ import "./Dashboard.css";
 
 
 
-    } catch(error) {
+    }catch(error){
 
 
       console.error(
-
         "Error cargando dashboard:",
-
         error
-
       );
 
 
@@ -172,122 +233,120 @@ import "./Dashboard.css";
 
 
 
-  return (
 
-    <div className="dashboard-layout">
 
+return (
 
-      <Sidebar />
+<div className="dashboard-layout">
 
 
-      <div className="dashboard-main">
+<Sidebar />
 
 
-        <Topbar />
 
+<div className="dashboard-main">
 
-        <main className="dashboard-content">
 
+<Topbar />
 
-          <h1>
-            Bienvenido a RutaPro 👋
-          </h1>
 
 
+<main className="dashboard-content">
 
-          <p className="dashboard-subtitle">
 
-            Aquí tienes un resumen de la actividad de tu empresa.
 
-          </p>
+<h1>
+Bienvenido a RutaPro 👋
+</h1>
 
 
 
+<p className="dashboard-subtitle">
 
+Aquí tienes un resumen de la actividad de tu empresa.
 
-          <div className="stats-grid">
+</p>
 
 
 
-            <StatCard
 
-              title="Pedidos de hoy"
 
-              value={stats.todayOrders}
+<div className="stats-grid">
 
-              color="#2563eb"
 
-              icon={<Package size={28} />}
 
-            />
+<StatCard
 
+title="Pedidos de hoy"
 
+value={stats.todayOrders}
 
+icon={<Package size={28}/>}
 
+/>
 
-            <StatCard
 
-              title="Clientes activos"
 
-              value={stats.activeClients}
 
-              color="#10b981"
+<StatCard
 
-              icon={<Users size={28} />}
+title="Clientes activos"
 
-            />
+value={stats.activeClients}
 
+icon={<Users size={28}/>}
 
+/>
 
 
 
-            <StatCard
 
-              title="Entregas pendientes"
 
-              value={stats.pendingDeliveries}
+<StatCard
 
-              color="#f59e0b"
+title="Entregas pendientes"
 
-              icon={<Truck size={28} />}
+value={stats.pendingDeliveries}
 
-            />
+icon={<Truck size={28}/>}
 
+/>
 
 
 
 
-            <StatCard
 
-              title="Ventas del día"
+<StatCard
 
-              value={`$${stats.todaySales.toLocaleString("es-CO")}`}
+title="Ventas del día"
 
-              color="#8b5cf6"
+value={`$${stats.todaySales.toLocaleString("es-CO")}`}
 
-              icon={<DollarSign size={28} />}
+icon={<DollarSign size={28}/>}
 
-            />
+/>
 
 
 
 
-          </div>
+</div>
 
 
 
-        </main>
+</main>
 
 
-      </div>
+</div>
 
 
-    </div>
+</div>
 
 
-  );
+);
+
 
 }
+
 
 
 export default Dashboard;

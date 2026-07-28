@@ -12,10 +12,12 @@ import Clients from "../pages/Clients/Clients";
 import Orders from "../pages/Orders/Orders";
 
 import Inventory from "../pages/Inventory/Inventory";
+
 import Reports from "../pages/Reports/Reports";
 import Settings from "../pages/Settings/Settings";
 import Admin from "../pages/Admin/Admin";
 import NotFound from "../pages/NotFound/NotFound";
+
 
 
 function AppRouter() {
@@ -25,33 +27,47 @@ function AppRouter() {
 
     <BrowserRouter>
 
+
       <Routes>
 
 
-        {/* Públicas */}
+        {/* PUBLICAS */}
 
 
         <Route
+
           path="/"
+
           element={<Home />}
+
         />
 
 
+
         <Route
+
           path="/login"
+
           element={<Login />}
+
         />
+
 
 
         <Route
+
           path="/register"
+
           element={<Register />}
+
         />
 
 
 
 
-        {/* Protegidas */}
+
+        {/* PROTEGIDAS */}
+
 
 
 
@@ -95,7 +111,6 @@ function AppRouter() {
 
 
 
-
         <Route
 
           path="/clients"
@@ -111,8 +126,6 @@ function AppRouter() {
           }
 
         />
-
-
 
 
 
@@ -138,8 +151,6 @@ function AppRouter() {
 
 
 
-
-
         <Route
 
           path="/inventory"
@@ -155,7 +166,6 @@ function AppRouter() {
           }
 
         />
-
 
 
 
@@ -181,7 +191,6 @@ function AppRouter() {
 
 
 
-
         <Route
 
           path="/settings"
@@ -197,8 +206,6 @@ function AppRouter() {
           }
 
         />
-
-
 
 
 
@@ -223,6 +230,8 @@ function AppRouter() {
 
 
 
+
+        {/* RUTA NO ENCONTRADA */}
 
 
         <Route

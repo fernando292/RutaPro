@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 
-import { getClients } from "../../services/clientService";
-import { getProducts } from "../../services/productService";
-import { addOrder } from "../../services/orderService";
+import { getClients } from "../../services/clients/clientService";
+import { getProducts } from "../../services/products/productService";
+import { addOrder } from "../../services/orders/orderService";
 import { useAuth } from "../../context/AuthContext";
+
+import { validateStock } from "../../services/inventory/stockValidator";
+import { discountStock } from "../../services/inventory/inventoryMovementService";
 
 import "./OrderForm.css";
 
 
 function OrderForm({ onSuccess }) {
-  
+
+
   const { profile } = useAuth();
+
 
   const [loading, setLoading] = useState(false);
 
@@ -19,34 +24,64 @@ function OrderForm({ onSuccess }) {
   const [products, setProducts] = useState([]);
 
 
+
+
   const initialForm = {
+
     clientId: "",
+
     clientName: "",
+
     address: "",
+
     status: "Pendiente",
+
     items: []
+
   };
+
+
 
 
   const [form, setForm] = useState(initialForm);
 
 
 
+
+
   useEffect(() => {
 
-    loadData();
 
-  }, []);
+    if (profile?.companyId) {
+
+      loadData();
+
+    }
+
+
+  }, [profile?.companyId]);
+
+
+
+
 
 
 
   const loadData = async () => {
 
+
     try {
 
-      const clientsData = await getClients();
 
-      const productsData = await getProducts();
+      const clientsData = await getClients(
+        profile.companyId
+      );
+
+
+      const productsData = await getProducts(
+        profile.companyId
+      );
+
 
 
       setClients(clientsData);
@@ -54,90 +89,145 @@ function OrderForm({ onSuccess }) {
       setProducts(productsData);
 
 
-    } catch (error) {
+
+    } catch(error) {
+
 
       console.error(
         "Error cargando datos:",
         error
       );
 
+
     }
 
+
   };
+
+
+
+
+
 
 
 
   const handleClientChange = (e) => {
 
+
     const client = clients.find(
+
       item => item.id === e.target.value
+
     );
+
 
 
     if (!client) return;
 
 
+
     setForm(prev => ({
+
 
       ...prev,
 
+
       clientId: client.id,
+
 
       clientName: client.name,
 
+
       address: client.address || ""
+
 
     }));
 
+
   };
+
+
+
+
+
 
 
 
   const handleStatusChange = (e) => {
 
+
     setForm(prev => ({
+
 
       ...prev,
 
+
       status: e.target.value
+
 
     }));
 
+
   };
+
+
+
+
+
+
 
 
 
   const addProductRow = () => {
 
+
     setForm(prev => ({
+
 
       ...prev,
 
+
       items: [
+
 
         ...prev.items,
 
+
         {
+
 
           rowId: Date.now(),
 
+
           productId: "",
+
 
           productName: "",
 
+
           price: 0,
+
 
           quantity: 1,
 
+
           subtotal: 0
+
 
         }
 
+
       ]
+
 
     }));
 
+
   };
+
+
+
+
 
 
 
@@ -146,27 +236,44 @@ function OrderForm({ onSuccess }) {
 
     setForm(prev => ({
 
+
       ...prev,
 
+
       items: prev.items.filter(
+
         (_, i) => i !== index
+
       )
 
+
     }));
+
 
   };
 
 
 
+
+
+
+
+
   const handleProductChange = (
+
     index,
+
     productId
+
   ) => {
 
 
     const product = products.find(
+
       item => item.id === productId
+
     );
+
 
 
     if (!product) return;
@@ -179,28 +286,41 @@ function OrderForm({ onSuccess }) {
       const items = [...prev.items];
 
 
+
       items[index] = {
+
 
         ...items[index],
 
+
         productId: product.id,
+
 
         productName: product.name,
 
+
         price: Number(product.price) || 0,
 
+
         subtotal:
+
           (Number(product.price) || 0) *
+
           Number(items[index].quantity || 1)
+
 
       };
 
 
+
       return {
+
 
         ...prev,
 
+
         items
+
 
       };
 
@@ -208,19 +328,33 @@ function OrderForm({ onSuccess }) {
     });
 
 
+
   };
 
 
 
+
+
+
+
+
+
   const handleQuantityChange = (
+
     index,
+
     quantity
+
   ) => {
 
 
+
     const value = Math.max(
+
       1,
+
       Number(quantity)
+
     );
 
 
@@ -231,24 +365,35 @@ function OrderForm({ onSuccess }) {
       const items = [...prev.items];
 
 
+
       items[index] = {
+
 
         ...items[index],
 
+
         quantity: value,
 
+
         subtotal:
+
           Number(items[index].price) *
+
           value
+
 
       };
 
 
+
       return {
+
 
         ...prev,
 
+
         items
+
 
       };
 
@@ -256,20 +401,30 @@ function OrderForm({ onSuccess }) {
     });
 
 
+
   };
+
+
+
+
 
 
 
 
   const total = form.items.reduce(
 
-    (acc, item) =>
+    (acc,item) =>
 
       acc + Number(item.subtotal || 0),
 
     0
 
   );
+
+
+
+
+
 
 
 
@@ -287,100 +442,168 @@ function OrderForm({ onSuccess }) {
 
     if (!form.clientId) {
 
+
       alert(
         "Selecciona un cliente."
       );
 
+
       return;
 
+
     }
+
 
 
 
     if (form.items.length === 0) {
 
+
       alert(
         "Debes agregar productos."
       );
 
+
       return;
+
 
     }
 
 
 
-    const invalidProduct =
-      form.items.some(
-        item =>
-          !item.productId ||
-          item.quantity <= 0
-      );
-
-
-
-    if (invalidProduct) {
-
-      alert(
-        "Revisa los productos agregados."
-      );
-
-      return;
-
-    }
 
 
 
     try {
 
 
+
       setLoading(true);
 
-      console.log("PROFILE:", profile);
+      console.log(
+        "ITEMS DEL PEDIDO:",
+        form.items
+     );
 
-      console.log("COMPANY ID:", profile?.companyId);
+
+      console.log(
+         "COMPANY ID:",
+         profile.companyId,
+         typeof profile.companyId
+     );
+
+
+
+      const stockValidation = await validateStock(
+
+        form.items,
+
+        profile.companyId
+
+      );
+
+
+
+      if (!stockValidation.valid) {
+
+
+        alert(stockValidation.message);
+
+
+        setLoading(false);
+
+
+        return;
+
+
+      }
+
+
+
+
+
 
       await addOrder(
-        
+
+
         {
 
-        clientId: form.clientId,
 
-        clientName: form.clientName,
+          clientId: form.clientId,
 
-        address: form.address,
 
-        status: form.status,
+          clientName: form.clientName,
 
-        items: form.items.map(item => ({
 
-          productId: item.productId,
+          address: form.address,
 
-          productName: item.productName,
 
-          price: item.price,
+          status: form.status,
 
-          quantity: item.quantity,
 
-          subtotal: item.subtotal
 
-        })),
+          items: form.items.map(item => ({
 
-        total,
 
-        createdAt: new Date()
 
-      },
+            productId: item.productId,
+
+
+            productName: item.productName,
+
+
+            price: item.price,
+
+
+            quantity: item.quantity,
+
+
+            subtotal: item.subtotal
+
+
+
+          })),
+
+
+
+          total,
+
+
+          createdAt: new Date()
+
+
+
+        },
+
 
         profile.companyId
 
 
-     );
+      );
+
+
+
+
+
+      await discountStock(
+
+        form.items,
+
+        profile.companyId
+
+      );
+
+
+
+
+
+
 
       setForm(initialForm);
 
 
 
-      if (onSuccess) {
+      if(onSuccess){
 
         onSuccess();
 
@@ -388,13 +611,20 @@ function OrderForm({ onSuccess }) {
 
 
 
-    } catch (error) {
+
+
+
+    } catch(error) {
 
 
       console.error(
+
         "Error creando pedido:",
+
         error
+
       );
+
 
 
     } finally {
@@ -410,52 +640,87 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
+
+
   return (
 
     <form
+
       className="order-form"
+
       onSubmit={handleSubmit}
+
     >
 
 
       <h2>
+
         Nuevo Pedido
+
       </h2>
 
 
 
+
       <label>
+
         Cliente
+
       </label>
+
+
 
 
       <select
 
+
         value={form.clientId}
+
 
         onChange={handleClientChange}
 
+
         required
+
 
       >
 
+
+
         <option value="">
+
           Seleccione un cliente
+
         </option>
 
 
-        {clients.map(client => (
 
-          <option
-            key={client.id}
-            value={client.id}
-          >
 
-            {client.name}
 
-          </option>
+        {
 
-        ))}
+          clients.map(client => (
+
+
+            <option
+
+              key={client.id}
+
+              value={client.id}
+
+            >
+
+              {client.name}
+
+            </option>
+
+
+          ))
+
+        }
+
 
 
       </select>
@@ -463,14 +728,17 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
       <label>
+
         Dirección
+
       </label>
 
 
-      <input
 
-        type="text"
+      <input
 
         value={form.address}
 
@@ -481,9 +749,15 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
       <label>
+
         Estado
+
       </label>
+
+
 
 
       <select
@@ -494,27 +768,45 @@ function OrderForm({ onSuccess }) {
 
       >
 
-       <option value="Pendiente">
-         Pendiente
-       </option>
 
-       <option value="Preparando">
-         Preparando
-       </option>
+        <option value="Pendiente">
 
-       <option value="En ruta">
-          En ruta
-       </option>
+          Pendiente
 
-       <option value="Entregado">
-          Entregado
-       </option>
-
-        <option value="Cancelado">
-         Cancelado
         </option>
 
+
+        <option value="Preparando">
+
+          Preparando
+
+        </option>
+
+
+        <option value="En ruta">
+
+          En ruta
+
+        </option>
+
+
+        <option value="Entregado">
+
+          Entregado
+
+        </option>
+
+
+        <option value="Cancelado">
+
+          Cancelado
+
+        </option>
+
+
       </select>
+
+
 
 
 
@@ -523,9 +815,15 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
       <h3>
+
         Productos
+
       </h3>
+
+
 
 
 
@@ -545,25 +843,35 @@ function OrderForm({ onSuccess }) {
 
 
 
+
             <select
 
+
               value={item.productId}
+
 
               onChange={(e)=>
 
                 handleProductChange(
+
                   index,
+
                   e.target.value
+
                 )
 
               }
+
 
             >
 
 
               <option value="">
+
                 Producto
+
               </option>
+
 
 
 
@@ -590,7 +898,10 @@ function OrderForm({ onSuccess }) {
               }
 
 
+
             </select>
+
+
 
 
 
@@ -606,8 +917,11 @@ function OrderForm({ onSuccess }) {
               onChange={(e)=>
 
                 handleQuantityChange(
+
                   index,
+
                   e.target.value
+
                 )
 
               }
@@ -618,8 +932,6 @@ function OrderForm({ onSuccess }) {
 
 
             <input
-
-              type="text"
 
               value={`$${Number(item.price).toLocaleString("es-CO")}`}
 
@@ -632,8 +944,6 @@ function OrderForm({ onSuccess }) {
 
             <input
 
-              type="text"
-
               value={`$${Number(item.subtotal).toLocaleString("es-CO")}`}
 
               readOnly
@@ -643,12 +953,16 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
             <button
 
               type="button"
 
               onClick={()=>
+
                 removeProductRow(index)
+
               }
 
             >
@@ -685,6 +999,8 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
       <hr />
 
 
@@ -693,10 +1009,14 @@ function OrderForm({ onSuccess }) {
       <h3>
 
         Total:
+
         {" "}
+
         ${total.toLocaleString("es-CO")}
 
+
       </h3>
+
 
 
 
@@ -712,7 +1032,9 @@ function OrderForm({ onSuccess }) {
         {
 
           loading
+
           ? "Guardando..."
+
           : "Guardar pedido"
 
         }
@@ -722,7 +1044,10 @@ function OrderForm({ onSuccess }) {
 
 
 
+
+
     </form>
+
 
   );
 

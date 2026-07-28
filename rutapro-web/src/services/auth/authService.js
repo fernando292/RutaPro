@@ -5,7 +5,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 
-import { auth } from "../config/firebase";
+import { auth } from "../../config/firebase";
 
 export const login = (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);
