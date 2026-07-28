@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { useAuth } from "../../context/AuthContext";
+
 import {
   addProduct,
   updateProduct
@@ -13,6 +15,7 @@ function ProductForm({
   product
 }) {
 
+  const { profile } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -121,7 +124,11 @@ function ProductForm({
 
 
         await addProduct(
-          productData
+
+          productData,
+
+          profile.companyId
+          
         );
 
 

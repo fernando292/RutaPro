@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+
+import { useAuth } from "../../context/AuthContext";
+
 import {
   Pencil,
   Trash2
@@ -23,6 +26,9 @@ import "./Products.css";
 
 function Products() {
 
+  const { profile } = useAuth();
+
+  console.log("EMPRESA PRODUCTOS:", profile);
 
   const [products, setProducts] = useState([]);
 
@@ -36,9 +42,12 @@ function Products() {
 
   useEffect(() => {
 
+   if (profile?.companyId) {
     loadProducts();
 
-  }, []);
+    }
+
+  }, [profile?.companyId]);
 
 
 
@@ -47,7 +56,9 @@ function Products() {
 
     try {
 
-      const data = await getProducts();
+      const data = await getProducts(
+        profile.companyId
+      );
 
       setProducts(data);
 

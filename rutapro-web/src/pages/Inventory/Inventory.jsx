@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useAuth } from "../../context/AuthContext";
+
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 
@@ -10,6 +12,9 @@ import "./Inventory.css";
 
 function Inventory() {
 
+  const { profile } = useAuth();
+
+  console.log("EMPRESA INVENTARIO:", profile);
 
   const [products, setProducts] = useState([]);
 
@@ -20,9 +25,12 @@ function Inventory() {
 
   useEffect(() => {
 
-    loadInventory();
+    if (profile && profile.companyId) {
+      loadInventory();
 
-  }, []);
+    } 
+
+  }, [profile?.companyId]);
 
 
 
@@ -33,7 +41,10 @@ function Inventory() {
     try {
 
 
-      const data = await getProducts();
+      const data = await getProducts(
+        profile.companyId
+       );
+
 
       setProducts(data);
 

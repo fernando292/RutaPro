@@ -5,47 +5,81 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { db } from "../config/firebase";
 
+const productsCollection = collection(
+  db,
+  "products"
+);
 
-const productsCollection = collection(db, "products");
 
 
+// Obtener productos de la empresa
 
-export const getProducts = async () => {
+export const getProducts = async (companyId) => {
 
-  const snapshot = await getDocs(productsCollection);
+  const q = query(
 
+    productsCollection,
+
+    where(
+      "companyId",
+      "==",
+      companyId
+    )
+
+  );
+
+  const snapshot = await getDocs(q);
 
   return snapshot.docs.map((item) => ({
+
     id: item.id,
+
     ...item.data(),
+
   }));
 
 };
 
 
 
-export const addProduct = async (product) => {
+
+// Crear producto
+
+export const addProduct = async (
+
+  product,
+  companyId
+
+) => {
 
   try {
 
     const response = await addDoc(
-      productsCollection,
-      product
-    );
 
+      productsCollection,
+
+      {
+
+        ...product,
+
+        companyId,
+
+      }
+
+    );
 
     console.log(
       "Producto creado:",
       response.id
     );
 
-
     return response;
-
 
   } catch (error) {
 
@@ -62,36 +96,57 @@ export const addProduct = async (product) => {
 
 
 
+
+// Actualizar producto
+
 export const updateProduct = async (
+
   id,
   product
+
 ) => {
 
   const productRef = doc(
+
     db,
+
     "products",
+
     id
+
   );
 
-
   return await updateDoc(
+
     productRef,
+
     product
+
   );
 
 };
 
 
 
+
+// Eliminar producto
+
 export const deleteProduct = async (id) => {
 
   const productRef = doc(
+
     db,
+
     "products",
+
     id
+
   );
 
+  return await deleteDoc(
 
-  return await deleteDoc(productRef);
+    productRef
+
+  );
 
 };
