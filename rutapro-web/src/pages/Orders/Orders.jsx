@@ -16,10 +16,17 @@ import {
   deleteOrder
 } from "../../services/orderService";
 
+import { useAuth } from "../../context/AuthContext";
+
 import "./Orders.css";
 
 
 function Orders() {
+
+
+  const { profile } = useAuth();
+
+  console.log("EMPRESA PEDIDOS:", profile);
 
 
   const [orders, setOrders] = useState([]);
@@ -36,9 +43,10 @@ function Orders() {
 
   useEffect(() => {
 
+    if (profile?.companyId) {
     loadOrders();
-
-  }, []);
+    }
+  }, [profile?.companyId]);
 
 
 
@@ -48,7 +56,7 @@ function Orders() {
 
     try {
 
-      const data = await getOrders();
+      const data = await getOrders(profile.companyId);
 
       setOrders(data);
 

@@ -5,10 +5,11 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { db } from "../config/firebase";
-
 
 const clientsCollection = collection(
   db,
@@ -17,16 +18,23 @@ const clientsCollection = collection(
 
 
 
+// Obtener clientes de la empresa
 
-// Obtener clientes
+export const getClients = async (companyId) => {
 
-export const getClients = async () => {
+  const q = query(
 
+    clientsCollection,
 
-  const snapshot = await getDocs(
-    clientsCollection
+    where(
+      "companyId",
+      "==",
+      companyId
+    )
+
   );
 
+  const snapshot = await getDocs(q);
 
   return snapshot.docs.map((item) => ({
 
@@ -44,45 +52,46 @@ export const getClients = async () => {
 
 // Crear cliente
 
-export const addClient = async (client) => {
+export const addClient = async (
 
+  client,
+  companyId
+
+) => {
 
   try {
-
 
     const response = await addDoc(
 
       clientsCollection,
 
-      client
+      {
+
+        ...client,
+
+        companyId,
+
+      }
 
     );
-
 
     console.log(
       "Cliente creado:",
       response.id
     );
 
-
     return response;
 
-
-
-  } catch(error) {
-
+  } catch (error) {
 
     console.error(
       "Error Firebase:",
       error
     );
 
-
     throw error;
 
-
   }
-
 
 };
 
@@ -93,10 +102,11 @@ export const addClient = async (client) => {
 // Actualizar cliente
 
 export const updateClient = async (
+
   id,
   client
-) => {
 
+) => {
 
   const clientRef = doc(
 
@@ -108,7 +118,6 @@ export const updateClient = async (
 
   );
 
-
   return await updateDoc(
 
     clientRef,
@@ -116,7 +125,6 @@ export const updateClient = async (
     client
 
   );
-
 
 };
 
@@ -128,7 +136,6 @@ export const updateClient = async (
 
 export const deleteClient = async (id) => {
 
-
   const clientRef = doc(
 
     db,
@@ -139,12 +146,10 @@ export const deleteClient = async (id) => {
 
   );
 
-
   return await deleteDoc(
 
     clientRef
 
   );
-
 
 };

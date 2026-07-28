@@ -1,0 +1,78 @@
+.settings-page {
+
+  padding:35px;
+
+}
+
+
+.settings-page h1 {
+
+  font-size:34px;
+
+  color:#0f172a;
+
+}
+
+
+
+.settings-page p {
+
+  color:#64748b;
+
+  margin-bottom:30px;
+
+}
+
+
+
+.settings-form {
+
+  background:white;
+
+  padding:30px;
+
+  border-radius:15px;
+
+  max-width:600px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:15px;
+
+}
+
+
+
+.settings-form input {
+
+  padding:12px;
+
+  border:1px solid #cbd5e1;
+
+  border-radius:8px;
+
+  font-size:15px;
+
+}
+
+
+
+.settings-form button {
+
+  padding:13px;
+
+  background:#2563eb;
+
+  color:white;
+
+  border:none;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  font-size:16px;
+
+}

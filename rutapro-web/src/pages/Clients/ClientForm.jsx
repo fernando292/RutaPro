@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 import {
   addClient,
@@ -12,6 +13,8 @@ function ClientForm({
   onSuccess,
   client
 }) {
+
+  const { profile } = useAuth();
 
 
   const [loading, setLoading] = useState(false);
@@ -131,13 +134,20 @@ function ClientForm({
       } else {
 
 
-        await addClient({
+        await addClient(
+            
+          {
 
           ...form,
 
           createdAt: new Date(),
 
-        });
+         },
+
+          profile.companyId
+
+
+        );
 
 
       }

@@ -7,6 +7,7 @@ import {
   doc,
   orderBy,
   query,
+  where, 
 } from "firebase/firestore";
 
 import { db } from "../config/firebase";
@@ -21,12 +22,19 @@ const ordersCollection = collection(
 
 // Obtener pedidos
 
-export const getOrders = async () => {
+export const getOrders = async (companyId) => {
 
 
-  const snapshot = await getDocs(
-    ordersCollection
+  const q = query(
+    ordersCollection,
+    where(
+        "companyId",
+           "==",
+           companyId
+   )
   );
+
+  const snapshot = await getDocs(q);
 
 
   return snapshot.docs.map((item) => ({
@@ -47,7 +55,7 @@ export const getOrders = async () => {
 
 // Crear pedido
 
-export const addOrder = async (order) => {
+export const addOrder = async (order, companyId) => {
 
 
   try {
@@ -72,6 +80,8 @@ export const addOrder = async (order) => {
 
 
       orderNumber: nextNumber,
+
+        companyId,
 
 
     };

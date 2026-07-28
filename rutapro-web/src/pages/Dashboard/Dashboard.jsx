@@ -15,13 +15,17 @@ import StatCard from "../../components/dashboard/StatCard";
 
 import { getOrders } from "../../services/orderService";
 import { getClients } from "../../services/clientService";
+import { useAuth } from "../../context/AuthContext";
 
 
 import "./Dashboard.css";
 
 
+  function Dashboard() {
 
-function Dashboard() {
+  const { profile } = useAuth();
+
+  console.log("PERFIL USUARIO:", profile);
 
 
   const [stats, setStats] = useState({
@@ -40,9 +44,11 @@ function Dashboard() {
 
   useEffect(() => {
 
+    if (profile?.companyId) {
     loadDashboard();
+    }
 
-  }, []);
+  }, [profile?.companyId]);
 
 
 
@@ -54,7 +60,7 @@ function Dashboard() {
     try {
 
 
-      const orders = await getOrders();
+      const orders = await getOrders(profile.companyId);
 
       const clients = await getClients();
 

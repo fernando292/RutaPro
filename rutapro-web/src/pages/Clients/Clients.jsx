@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import {
   Pencil,
   Trash2
@@ -24,6 +25,10 @@ import "./Clients.css";
 function Clients() {
 
 
+  const { profile } = useAuth();
+
+  console.log("EMPRESA CLIENTES:", profile);
+
   const [clients, setClients] = useState([]);
 
   const [loading, setLoading] = useState(true);
@@ -37,11 +42,12 @@ function Clients() {
 
   useEffect(() => {
 
+  if (profile?.companyId) {
     loadClients();
 
-  }, []);
+    }
 
-
+  }, [profile?.companyId]);
 
 
 
@@ -49,7 +55,7 @@ function Clients() {
 
     try {
 
-      const data = await getClients();
+      const data = await getClients(profile.companyId);
 
       setClients(data);
 

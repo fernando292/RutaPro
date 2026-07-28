@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { getClients } from "../../services/clientService";
 import { getProducts } from "../../services/productService";
 import { addOrder } from "../../services/orderService";
+import { useAuth } from "../../context/AuthContext";
 
 import "./OrderForm.css";
 
 
 function OrderForm({ onSuccess }) {
+  
+  const { profile } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -332,9 +335,13 @@ function OrderForm({ onSuccess }) {
 
       setLoading(true);
 
+      console.log("PROFILE:", profile);
 
+      console.log("COMPANY ID:", profile?.companyId);
 
-      await addOrder({
+      await addOrder(
+        
+        {
 
         clientId: form.clientId,
 
@@ -362,9 +369,12 @@ function OrderForm({ onSuccess }) {
 
         createdAt: new Date()
 
-      });
+      },
+
+        profile.companyId
 
 
+     );
 
       setForm(initialForm);
 
