@@ -1,0 +1,59 @@
+.orders-page {
+
+  padding:24px;
+
+}
+
+
+
+.orders-header {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:24px;
+
+}
+
+
+
+.orders-header h1 {
+
+  font-size:28px;
+
+}
+
+
+
+.orders-header p {
+
+  color:var(--text-secondary);
+
+}
+
+
+
+.add-order-button {
+
+  background:var(--primary);
+
+  color:white;
+
+  padding:12px 20px;
+
+  border-radius:var(--radius-sm);
+
+  font-weight:600;
+
+}
+
+
+
+.add-order-button:hover {
+
+  background:var(--primary-dark);
+
+}

@@ -1,0 +1,139 @@
+.ui-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: var(--surface);
+
+  border-radius: var(--radius-md);
+
+  overflow: hidden;
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* Encabezado */
+
+.ui-table th {
+
+  text-align: left;
+
+  padding: 16px;
+
+  background: #f1f5f9;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+
+
+/* Celdas */
+
+.ui-table td {
+
+  padding: 16px;
+
+  color: var(--text-primary);
+
+  font-size: 15px;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+
+
+/* Última fila sin borde */
+
+.ui-table tbody tr:last-child td {
+
+  border-bottom: none;
+
+}
+
+
+
+/* Efecto hover */
+
+.ui-table tbody tr {
+
+  transition: background 0.2s ease;
+
+}
+
+
+.ui-table tbody tr:hover {
+
+  background: #f8fafc;
+
+}
+
+
+
+/* Acciones */
+
+.table-actions {
+
+  display: flex;
+
+  gap: 10px;
+
+  align-items: center;
+
+}
+
+
+
+.table-actions button {
+
+  width: 34px;
+
+  height: 34px;
+
+  border-radius: var(--radius-sm);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: transparent;
+
+}
+
+
+
+.table-actions button:hover {
+
+  background: var(--background);
+
+}
+
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+
+  .ui-table {
+
+    display: block;
+
+    overflow-x: auto;
+
+    white-space: nowrap;
+
+  }
+
+
+}

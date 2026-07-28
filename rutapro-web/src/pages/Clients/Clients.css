@@ -1,0 +1,86 @@
+.clients-page {
+
+  padding: 24px;
+
+}
+
+
+
+.clients-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 24px;
+
+}
+
+
+
+.clients-header h1 {
+
+  font-size: 28px;
+
+  color: var(--text-primary);
+
+}
+
+
+
+.clients-header p {
+
+  margin-top: 6px;
+
+  color: var(--text-secondary);
+
+}
+
+
+
+
+.add-client-button {
+
+  background: var(--primary);
+
+  color: white;
+
+  padding: 12px 20px;
+
+  border-radius: var(--radius-sm);
+
+  font-weight: 600;
+
+  transition: 0.2s ease;
+
+}
+
+
+
+.add-client-button:hover {
+
+  background: var(--primary-dark);
+
+}
+
+
+
+
+
+@media (max-width: 768px) {
+
+
+  .clients-header {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+  }
+
+
+}

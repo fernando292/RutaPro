@@ -1,0 +1,255 @@
+.order-form {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+
+  background: white;
+
+  padding: 32px;
+
+  border-radius: 20px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  max-height: calc(100vh - 160px);
+
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+}
+
+
+/* Scroll personalizado */
+
+.order-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+.order-form::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
+
+
+.order-form h2 {
+
+  font-size: 28px;
+
+  color: #1F2937;
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.order-form h3 {
+
+  color: #1F2937;
+
+  margin-top: 10px;
+
+}
+
+
+
+.order-form label {
+
+  font-weight: 600;
+
+  color: #374151;
+
+}
+
+
+
+.order-form select,
+.order-form input {
+
+
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid #D1D5DB;
+
+  font-size: 15px;
+
+  outline: none;
+
+  background: white;
+
+}
+
+
+
+.order-form select:focus,
+.order-form input:focus {
+
+  border-color: #2563EB;
+
+}
+
+
+
+.order-product-row {
+
+
+  display: grid;
+
+  grid-template-columns:
+
+    2fr
+    100px
+    120px
+    120px
+    100px;
+
+
+  gap: 12px;
+
+  align-items: center;
+
+  padding: 16px;
+
+  background: #F8FAFC;
+
+  border-radius: 14px;
+
+}
+
+
+
+.order-product-row button {
+
+
+  background: #EF4444;
+
+  color: white;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+}
+
+
+
+.order-product-row button:hover {
+
+  opacity: 0.9;
+
+}
+
+
+
+
+.order-form button[type="button"] {
+
+
+  background: #2563EB;
+
+  color: white;
+
+  padding: 12px 18px;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+}
+
+
+
+
+.order-form button[type="submit"] {
+
+
+  background: #10B981;
+
+  color: white;
+
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+
+  cursor: pointer;
+
+
+  position: sticky;
+
+  bottom: 0;
+
+
+}
+
+
+
+.order-form button[type="submit"]:disabled {
+
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+}
+
+
+
+
+.order-form hr {
+
+
+  width: 100%;
+
+  border: none;
+
+  border-top: 1px solid #E5E7EB;
+
+  margin: 15px 0;
+
+}
+
+
+
+
+/* Responsive */
+
+@media(max-width: 900px){
+
+
+  .order-product-row {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+  .order-form {
+
+    max-height: none;
+
+  }
+
+}

@@ -1,77 +1,34 @@
-.dashboard {
+.dashboard-layout {
   display: flex;
   min-height: 100vh;
   background: #f8fafc;
 }
 
-.sidebar {
-  width: 260px;
-  background: #1e293b;
-  color: white;
-  padding: 30px;
+.dashboard-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.sidebar h2 {
-  margin-bottom: 40px;
-  font-size: 28px;
-}
-
-.sidebar span {
-  color: #3b82f6;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.dashboard-content {
   flex: 1;
+  padding: 35px;
 }
 
-.sidebar a {
-  color: white;
-  text-decoration: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  transition: 0.3s;
+.dashboard-content h1 {
+  font-size: 34px;
+  color: #0f172a;
 }
 
-.sidebar a:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #60a5fa;
-}
-
-.logout-button {
-  width: 100%;
-  padding: 14px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.logout-button:hover {
-  background: #dc2626;
-}
-
-.content {
-  flex: 1;
-  padding: 50px;
-}
-
-.content h1 {
-  font-size: 36px;
-  color: #1e293b;
-  margin-bottom: 16px;
-}
-
-.content p {
+.dashboard-subtitle {
+  margin-top: 10px;
+  margin-bottom: 35px;
   color: #64748b;
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: 16px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
 }

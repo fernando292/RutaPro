@@ -11,51 +11,53 @@ import Table from "../../components/ui/Table/Table";
 import Modal from "../../components/ui/Modal/Modal";
 import ButtonIcon from "../../components/ui/ButtonIcon/ButtonIcon";
 
-import ProductForm from "./ProductForm";
+import ClientForm from "./ClientForm";
 
 import {
-  getProducts,
-  deleteProduct
-} from "../../services/productService";
+  getClients,
+  deleteClient
+} from "../../services/clientService";
 
-import "./Products.css";
-
-
-function Products() {
+import "./Clients.css";
 
 
-  const [products, setProducts] = useState([]);
+function Clients() {
+
+
+  const [clients, setClients] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
   const [openModal, setOpenModal] = useState(false);
 
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
+
 
 
 
   useEffect(() => {
 
-    loadProducts();
+    loadClients();
 
   }, []);
 
 
 
 
-  const loadProducts = async () => {
+
+  const loadClients = async () => {
 
     try {
 
-      const data = await getProducts();
+      const data = await getClients();
 
-      setProducts(data);
+      setClients(data);
 
 
-    } catch (error) {
+    } catch(error) {
 
       console.error(
-        "Error cargando productos:",
+        "Error cargando clientes:",
         error
       );
 
@@ -72,19 +74,19 @@ function Products() {
 
 
 
-  const handleProductSuccess = async () => {
+
+  const handleSuccess = async () => {
 
 
     setOpenModal(false);
 
+    setSelectedClient(null);
 
-    setSelectedProduct(null);
-
-
-    await loadProducts();
+    await loadClients();
 
 
   };
+
 
 
 
@@ -93,35 +95,42 @@ function Products() {
   const handleDelete = async (id) => {
 
 
-    const confirm = window.confirm(
-      "¿Seguro que deseas eliminar este producto?"
+    const confirmDelete = window.confirm(
+      "¿Seguro que deseas eliminar este cliente?"
     );
 
 
-    if (!confirm) return;
+
+    if (!confirmDelete) return;
+
 
 
 
     try {
 
-      await deleteProduct(id);
+
+      await deleteClient(id);
 
 
-      await loadProducts();
+      await loadClients();
 
 
 
-    } catch (error) {
+    } catch(error) {
+
 
       console.error(
-        "Error eliminando producto:",
+        "Error eliminando cliente:",
         error
       );
+
 
     }
 
 
   };
+
+
 
 
 
@@ -133,33 +142,37 @@ function Products() {
 
     {
       key: "name",
-      label: "Producto"
+      label: "Cliente"
     },
 
 
     {
-      key: "category",
-      label: "Categoría"
+      key: "phone",
+      label: "Teléfono"
     },
 
 
     {
-      key: "price",
-      label: "Precio",
-
-      render: (value) =>
-        `$${Number(value).toLocaleString("es-CO")}`
-
+      key: "email",
+      label: "Correo"
     },
 
 
     {
-      key: "stock",
-      label: "Stock"
+      key: "city",
+      label: "Ciudad"
+    },
+
+
+    {
+      key: "status",
+      label: "Estado"
     }
 
 
   ];
+
+
 
 
 
@@ -183,21 +196,23 @@ function Products() {
 
 
 
-        <main className="products-page">
+        <main className="clients-page">
 
 
-          <div className="products-header">
+
+          <div className="clients-header">
+
 
 
             <div>
 
               <h1>
-                Productos
+                Clientes
               </h1>
 
 
               <p>
-                Administra el catálogo de productos.
+                Administra los clientes registrados.
               </p>
 
 
@@ -207,13 +222,14 @@ function Products() {
 
 
 
+
             <button
 
-              className="add-product-button"
+              className="add-client-button"
 
               onClick={() => {
 
-                setSelectedProduct(null);
+                setSelectedClient(null);
 
                 setOpenModal(true);
 
@@ -221,10 +237,11 @@ function Products() {
 
             >
 
-              + Nuevo producto
+              + Nuevo cliente
 
 
             </button>
+
 
 
 
@@ -235,13 +252,16 @@ function Products() {
 
 
 
+
+
           {
+
 
             loading ? (
 
 
               <p>
-                Cargando productos...
+                Cargando clientes...
               </p>
 
 
@@ -251,34 +271,50 @@ function Products() {
 
               <Table
 
+
                 columns={columns}
 
-                data={products}
+
+                data={clients}
 
 
 
-                actions={(product) => (
+
+                actions={(client) => (
+
 
                   <>
 
 
+
                     <ButtonIcon
 
-                      icon={<Pencil size={18} />}
+
+                      icon={<Pencil size={18}/>}
+
 
                       type="edit"
 
+
                       title="Editar"
+
+
 
                       onClick={() => {
 
-                        setSelectedProduct(product);
+
+                        setSelectedClient(client);
+
 
                         setOpenModal(true);
 
+
+
                       }}
 
+
                     />
+
 
 
 
@@ -286,27 +322,37 @@ function Products() {
 
                     <ButtonIcon
 
-                      icon={<Trash2 size={18} />}
+
+                      icon={<Trash2 size={18}/>}
+
 
                       type="delete"
 
+
                       title="Eliminar"
+
+
 
                       onClick={() =>
 
-                        handleDelete(product.id)
+                        handleDelete(client.id)
 
                       }
 
+
                     />
+
 
 
                   </>
 
 
+
                 )}
 
+
               />
+
 
 
             )
@@ -319,7 +365,9 @@ function Products() {
 
 
 
+
         </main>
+
 
 
 
@@ -331,31 +379,46 @@ function Products() {
 
 
 
+
       <Modal
+
 
         isOpen={openModal}
 
+
+
         onClose={() => {
+
 
           setOpenModal(false);
 
-          setSelectedProduct(null);
+
+          setSelectedClient(null);
+
 
         }}
+
 
       >
 
 
-        <ProductForm
 
-          product={selectedProduct}
 
-          onSuccess={handleProductSuccess}
+        <ClientForm
+
+
+          client={selectedClient}
+
+
+          onSuccess={handleSuccess}
+
 
         />
 
 
+
       </Modal>
+
 
 
 
@@ -370,4 +433,4 @@ function Products() {
 }
 
 
-export default Products;
+export default Clients;
