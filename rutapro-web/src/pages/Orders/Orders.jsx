@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
@@ -9,6 +9,7 @@ import ButtonIcon from "../../components/ui/ButtonIcon/ButtonIcon";
 import Modal from "../../components/ui/Modal/Modal";
 
 import OrderForm from "./OrderForm";
+import OrderDetail from "./OrderDetail";
 
 import {
   getOrders,
@@ -27,6 +28,10 @@ function Orders() {
 
   const [openModal, setOpenModal] = useState(false);
 
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+
+
 
 
   useEffect(() => {
@@ -34,6 +39,7 @@ function Orders() {
     loadOrders();
 
   }, []);
+
 
 
 
@@ -66,6 +72,7 @@ function Orders() {
 
 
 
+
   const handleSuccess = async () => {
 
     setOpenModal(false);
@@ -89,6 +96,7 @@ function Orders() {
     if (!confirmDelete) return;
 
 
+
     try {
 
       await deleteOrder(id);
@@ -96,14 +104,18 @@ function Orders() {
       await loadOrders();
 
 
+
     } catch(error) {
+
 
       console.error(
         "Error eliminando pedido:",
         error
       );
 
+
     }
+
 
   };
 
@@ -111,29 +123,44 @@ function Orders() {
 
 
 
+
+
   const columns = [
+
+
+    {
+      key: "orderNumber",
+      label: "Pedido"
+    },
+
 
     {
       key: "status",
       label: "Estado"
     },
 
+
     {
       key: "address",
       label: "Dirección"
     },
+
 
     {
       key: "total",
       label: "Total"
     },
 
+
     {
       key: "createdAt",
       label: "Fecha"
     }
 
+
   ];
+
+
 
 
 
@@ -144,20 +171,26 @@ function Orders() {
     <div className="dashboard-layout">
 
 
+
       <Sidebar />
 
 
+
       <div className="dashboard-main">
+
 
 
         <Topbar />
 
 
 
+
         <main className="orders-page">
 
 
+
           <div className="orders-header">
+
 
 
             <div>
@@ -177,11 +210,18 @@ function Orders() {
 
 
 
+
             <button
 
               className="add-order-button"
 
-              onClick={() => setOpenModal(true)}
+              onClick={() => {
+
+                setSelectedOrder(null);
+
+                setOpenModal(true);
+
+              }}
 
             >
 
@@ -192,7 +232,10 @@ function Orders() {
 
 
 
+
           </div>
+
+
 
 
 
@@ -202,37 +245,109 @@ function Orders() {
 
             loading ? (
 
+
               <p>
                 Cargando pedidos...
               </p>
 
 
+
             ) : (
+
 
 
               <Table
 
+
                 columns={columns}
+
 
                 data={orders}
 
+
+
                 actions={(order) => (
 
-                  <ButtonIcon
 
-                    icon={<Trash2 size={18}/>}
 
-                    type="delete"
+                  <div
 
-                    title="Eliminar"
+                    style={{
 
-                    onClick={() =>
-                      handleDelete(order.id)
-                    }
+                      display:"flex",
 
-                  />
+                      gap:"10px"
+
+                    }}
+
+                  >
+
+
+
+
+                    <ButtonIcon
+
+
+                      icon={
+                        <Eye size={18}/>
+                      }
+
+
+                      title="Ver pedido"
+
+
+
+                      onClick={() => {
+
+
+                        setSelectedOrder(order);
+
+                        setOpenModal(true);
+
+
+                      }}
+
+
+                    />
+
+
+
+
+
+                    <ButtonIcon
+
+
+                      icon={
+                        <Trash2 size={18}/>
+                      }
+
+
+
+                      type="delete"
+
+
+
+                      title="Eliminar"
+
+
+
+                      onClick={() =>
+                        handleDelete(order.id)
+                      }
+
+
+
+                    />
+
+
+
+
+                  </div>
+
 
                 )}
+
+
 
               />
 
@@ -245,7 +360,11 @@ function Orders() {
 
 
 
+
+
         </main>
+
+
 
 
 
@@ -257,19 +376,64 @@ function Orders() {
 
 
 
+
+
       <Modal
+
+
 
         isOpen={openModal}
 
-        onClose={() => setOpenModal(false)}
+
+
+        onClose={() => {
+
+
+          setOpenModal(false);
+
+          setSelectedOrder(null);
+
+
+        }}
+
+
 
       >
 
-        <OrderForm
 
-          onSuccess={handleSuccess}
 
-        />
+
+
+        {
+
+          selectedOrder ? (
+
+
+            <OrderDetail
+
+              order={selectedOrder}
+
+            />
+
+
+
+          ) : (
+
+
+            <OrderForm
+
+              onSuccess={handleSuccess}
+
+            />
+
+
+          )
+
+
+        }
+
+
+
 
 
       </Modal>
@@ -277,11 +441,15 @@ function Orders() {
 
 
 
+
+
     </div>
+
 
   );
 
 }
+
 
 
 export default Orders;

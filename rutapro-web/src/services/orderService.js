@@ -5,6 +5,8 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  orderBy,
+  query,
 } from "firebase/firestore";
 
 import { db } from "../config/firebase";
@@ -14,7 +16,6 @@ const ordersCollection = collection(
   db,
   "orders"
 );
-
 
 
 
@@ -44,8 +45,6 @@ export const getOrders = async () => {
 
 
 
-
-
 // Crear pedido
 
 export const addOrder = async (order) => {
@@ -54,13 +53,39 @@ export const addOrder = async (order) => {
   try {
 
 
+    // Obtener pedidos existentes
+
+    const snapshot = await getDocs(
+      ordersCollection
+    );
+
+
+    const nextNumber =
+      snapshot.size + 1;
+
+
+
+    const newOrder = {
+
+
+      ...order,
+
+
+      orderNumber: nextNumber,
+
+
+    };
+
+
+
     const response = await addDoc(
 
       ordersCollection,
 
-      order
+      newOrder
 
     );
+
 
 
     console.log(
@@ -70,6 +95,7 @@ export const addOrder = async (order) => {
       response.id
 
     );
+
 
 
     return response;
@@ -95,8 +121,6 @@ export const addOrder = async (order) => {
 
 
 };
-
-
 
 
 
@@ -135,9 +159,6 @@ export const updateOrder = async (
 
 
 };
-
-
-
 
 
 
