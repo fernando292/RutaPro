@@ -484,18 +484,25 @@ function OrderForm({ onSuccess }) {
 
       >
 
-        <option>
-          Pendiente
-        </option>
+       <option value="Pendiente">
+         Pendiente
+       </option>
 
-        <option>
-          En proceso
-        </option>
+       <option value="Preparando">
+         Preparando
+       </option>
 
-        <option>
+       <option value="En ruta">
+          En ruta
+       </option>
+
+       <option value="Entregado">
           Entregado
-        </option>
+       </option>
 
+        <option value="Cancelado">
+         Cancelado
+        </option>
 
       </select>
 

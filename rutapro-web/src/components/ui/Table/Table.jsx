@@ -3,26 +3,75 @@ import "./Table.css";
 
 function formatValue(value) {
 
+
+  // Estados visuales de pedidos
+
+  const statusStyles = {
+
+    Pendiente: "status pendiente",
+
+    Preparando: "status preparando",
+
+    "En ruta": "status ruta",
+
+    Entregado: "status entregado",
+
+    Cancelado: "status cancelado"
+
+  };
+
+
+
+  if (statusStyles[value]) {
+
+    return (
+
+      <span className={statusStyles[value]}>
+
+        {value}
+
+      </span>
+
+    );
+
+  }
+
+
+
+
   // Firebase Timestamp
+
   if (
+
     value &&
+
     typeof value === "object" &&
+
     value.seconds
+
   ) {
 
     return new Date(
+
       value.seconds * 1000
+
     ).toLocaleDateString("es-CO");
 
   }
 
 
+
+
   // Valores vacíos
 
   if (
+
     value === null ||
+
     value === undefined ||
+
     value === ""
+
   ) {
 
     return "-";
@@ -30,28 +79,40 @@ function formatValue(value) {
   }
 
 
-  // Números como moneda
+
+
+  // Números
 
   if (
+
     typeof value === "number"
+
   ) {
 
     return value.toLocaleString(
+
       "es-CO"
+
     );
 
   }
 
 
-  // Objetos que no deberían renderizarse
+
+
+  // Objetos
 
   if (
+
     typeof value === "object"
+
   ) {
 
     return JSON.stringify(value);
 
   }
+
+
 
 
   return value;
@@ -60,49 +121,78 @@ function formatValue(value) {
 
 
 
+
+
 function Table({
+
   columns,
+
   data,
+
   actions
+
 }) {
+
 
 
   return (
 
+
     <div className="table-container">
+
 
 
       <table className="table">
 
 
+
         <thead>
+
 
           <tr>
 
+
+
             {
+
               columns.map((column) => (
 
+
                 <th
+
                   key={column.key}
+
                 >
 
                   {column.label}
 
+
                 </th>
 
+
               ))
+
             }
+
+
 
 
             {
+
               actions && (
 
+
                 <th>
+
                   Acciones
+
                 </th>
 
+
               )
+
             }
+
 
 
           </tr>
@@ -112,62 +202,99 @@ function Table({
 
 
 
+
+
         <tbody>
+
 
 
           {
 
+
             data.length === 0 ? (
+
 
               <tr>
 
+
                 <td
+
                   colSpan={
+
                     columns.length +
+
                     (actions ? 1 : 0)
+
                   }
+
                 >
 
                   No hay datos disponibles
 
+
                 </td>
 
+
               </tr>
+
 
 
             ) : (
 
 
-              data.map((row) => (
 
+              data.map((row) => {
+
+               console.log("DATOS TABLA:", row);
+
+               return (
 
                 <tr
+
                   key={row.id}
+
                 >
+
 
 
                   {
 
+
                     columns.map((column) => (
 
 
+
                       <td
+
                         key={column.key}
+
                       >
 
+
+
                         {
+
                           formatValue(
+
                             row[column.key]
+
                           )
+
                         }
+
 
 
                       </td>
 
 
+
                     ))
 
+
+
                   }
+
+
 
 
 
@@ -176,14 +303,23 @@ function Table({
 
                     actions && (
 
+
+
                       <td>
 
+
+
                         {
+
                           actions(row)
+
                         }
 
 
+
                       </td>
+
+
 
                     )
 
@@ -192,22 +328,31 @@ function Table({
 
 
 
+
                 </tr>
 
 
-              ))
 
+              );
+
+
+              })
 
             )
+
 
 
           }
 
 
+
         </tbody>
 
 
+
+
       </table>
+
 
 
     </div>
@@ -216,6 +361,7 @@ function Table({
   );
 
 }
+
 
 
 export default Table;

@@ -4,7 +4,19 @@
 
   max-width: 700px;
 
+  max-height: 75vh;
+
+  overflow-y: auto;
+
   padding: 25px;
+
+}
+
+
+
+.order-detail::-webkit-scrollbar {
+
+  width: 8px;
 
 }
 
@@ -105,5 +117,7 @@
   font-weight: 700;
 
   text-align: center;
+
+  margin-top: 20px;
 
 }

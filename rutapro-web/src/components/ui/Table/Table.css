@@ -1,59 +1,78 @@
-.ui-table {
+.table-container {
+
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
 
-  background: var(--surface);
+  overflow-x: auto;
 
-  border-radius: var(--radius-md);
+  background: white;
 
-  overflow: hidden;
+  border-radius: 12px;
 
-  box-shadow: var(--shadow-sm);
+  border: 1px solid #E5E7EB;
+
 }
 
 
-/* Encabezado */
 
-.ui-table th {
+.table {
 
-  text-align: left;
+  width: 100%;
+
+  border-collapse: collapse;
+
+}
+
+
+
+.table thead {
+
+  background: #F8FAFC;
+
+}
+
+
+
+.table th {
 
   padding: 16px;
 
-  background: #f1f5f9;
-
-  color: var(--text-secondary);
+  text-align: left;
 
   font-size: 14px;
 
   font-weight: 600;
 
-  border-bottom: 1px solid var(--border);
+  color: #374151;
+
+  border-bottom: 1px solid #E5E7EB;
 
 }
 
 
 
-/* Celdas */
-
-.ui-table td {
+.table td {
 
   padding: 16px;
 
-  color: var(--text-primary);
+  font-size: 14px;
 
-  font-size: 15px;
+  color: #4B5563;
 
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #E5E7EB;
 
 }
 
 
 
-/* Última fila sin borde */
+.table tbody tr:hover {
 
-.ui-table tbody tr:last-child td {
+  background: #F9FAFB;
+
+}
+
+
+
+.table tbody tr:last-child td {
 
   border-bottom: none;
 
@@ -61,79 +80,111 @@
 
 
 
-/* Efecto hover */
-
-.ui-table tbody tr {
-
-  transition: background 0.2s ease;
-
-}
+/* ==========================
+   ESTADOS DE PEDIDOS
+========================== */
 
 
-.ui-table tbody tr:hover {
+.status {
 
-  background: #f8fafc;
-
-}
-
-
-
-/* Acciones */
-
-.table-actions {
-
-  display: flex;
-
-  gap: 10px;
-
-  align-items: center;
-
-}
-
-
-
-.table-actions button {
-
-  width: 34px;
-
-  height: 34px;
-
-  border-radius: var(--radius-sm);
-
-  display: flex;
+  display: inline-flex;
 
   align-items: center;
 
   justify-content: center;
 
-  background: transparent;
+  padding: 6px 14px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
 
 }
 
 
 
-.table-actions button:hover {
+/* Pendiente */
 
-  background: var(--background);
+.pendiente {
+
+  background: #FEF3C7;
+
+  color: #92400E;
 
 }
 
 
 
-/* Responsive */
+/* Preparando */
 
-@media (max-width: 768px) {
+.preparando {
+
+  background: #DBEAFE;
+
+  color: #1E40AF;
+
+}
 
 
-  .ui-table {
 
-    display: block;
+/* En ruta */
 
-    overflow-x: auto;
+.ruta {
 
-    white-space: nowrap;
+  background: #EDE9FE;
 
-  }
+  color: #6D28D9;
 
+}
+
+
+
+/* Entregado */
+
+.entregado {
+
+  background: #DCFCE7;
+
+  color: #166534;
+
+}
+
+
+
+/* Cancelado */
+
+.cancelado {
+
+  background: #FEE2E2;
+
+  color: #991B1B;
+
+}
+
+
+
+/* Botones dentro de tabla */
+
+.table button {
+
+  cursor: pointer;
+
+}
+
+
+
+/* Mensaje sin datos */
+
+.table td[colspan] {
+
+  text-align: center;
+
+  padding: 40px;
+
+  color: #6B7280;
 
 }
