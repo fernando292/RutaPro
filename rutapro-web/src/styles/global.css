@@ -1,0 +1,10 @@
+@import "./variables.css";
+@import "./reset.css";
+
+body {
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}

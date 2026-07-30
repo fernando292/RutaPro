@@ -1,0 +1,61 @@
+.vehicles-page{
+
+  padding:30px;
+
+}
+
+.vehicles-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:30px;
+
+}
+
+.vehicles-header h1{
+
+  margin:0;
+
+  font-size:30px;
+
+}
+
+.vehicles-header p{
+
+  margin-top:8px;
+
+  color:#6B7280;
+
+}
+
+.add-vehicle-button{
+
+  background:#2563EB;
+
+  color:white;
+
+  border:none;
+
+  padding:12px 18px;
+
+  border-radius:10px;
+
+  cursor:pointer;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  transition:.2s;
+
+}
+
+.add-vehicle-button:hover{
+
+  background:#1D4ED8;
+
+}

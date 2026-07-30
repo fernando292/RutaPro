@@ -104,7 +104,23 @@ function Sidebar() {
 
         </NavLink>
 
+        <NavLink to="/drivers">
 
+          🚚 Conductores
+
+        </NavLink>
+
+        <NavLink to="/vehicles">
+
+          🚛 Vehículos
+
+        </NavLink>
+
+        <NavLink to="/routes">
+
+         🗺️ Rutas
+
+        </NavLink>
 
 
         <NavLink to="/reports">

@@ -12,6 +12,9 @@ import Clients from "../pages/Clients/Clients";
 import Orders from "../pages/Orders/Orders";
 
 import Inventory from "../pages/Inventory/Inventory";
+import Drivers from "../pages/Drivers/Drivers";
+import Vehicles from "../pages/Vehicles/Vehicles";
+import RoutesPage from "../pages/Routes/Routes";
 
 import Reports from "../pages/Reports/Reports";
 import Settings from "../pages/Settings/Settings";
@@ -167,8 +170,55 @@ function AppRouter() {
 
         />
 
+        
 
+        <Route
 
+          path="/drivers"
+
+          element={
+
+            <ProtectedRoute>
+
+             <Drivers />
+
+            </ProtectedRoute>
+
+          }
+
+        />
+
+        <Route
+
+          path="/vehicles" 
+          
+          element={
+
+            <ProtectedRoute>
+
+              <Vehicles />
+
+            </ProtectedRoute>
+
+          }
+
+        />  
+
+        <Route
+
+          path="/routes"
+
+          element={
+
+            <ProtectedRoute>
+
+              <RoutesPage />
+
+            </ProtectedRoute>
+
+          }
+
+        />    
 
 
         <Route

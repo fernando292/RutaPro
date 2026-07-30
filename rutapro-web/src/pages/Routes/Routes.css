@@ -1,0 +1,65 @@
+.routes-page{
+
+  padding:30px;
+
+}
+
+
+
+.routes-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:30px;
+
+}
+
+
+
+.routes-header h1{
+
+  margin:0;
+
+  font-size:30px;
+
+}
+
+
+
+.routes-header p{
+
+  color:#6B7280;
+
+}
+
+
+
+.add-route-button{
+
+  background:#2563EB;
+
+  color:white;
+
+  border:none;
+
+  padding:12px 18px;
+
+  border-radius:10px;
+
+  cursor:pointer;
+
+  font-weight:600;
+
+}
+
+
+
+.add-route-button:hover{
+
+  background:#1D4ED8;
+
+}
