@@ -28,7 +28,12 @@ function HowItWorks() {
 
 
   return (
-    <section className="how-it-works">
+    <section 
+
+      id="funciones"
+      className="how-it-works"
+      
+    >
 
       <div className="how-header">
 

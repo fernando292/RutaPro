@@ -21,10 +21,13 @@ import "./RouteForm.css";
 
 function RouteForm({
   route,
+  mode,
   onSuccess
 }) {
 
   const { profile } = useAuth();
+
+  const isView = mode === "view";
 
 
   const [loading, setLoading] = useState(false);
@@ -246,7 +249,9 @@ function RouteForm({
 
         ...form,
 
-        orders: selectedOrders.length
+        orders: selectedOrders,
+
+        totalOrders: selectedOrders.length
 
       };
 
@@ -340,9 +345,16 @@ function RouteForm({
       <h2>
 
         {
-          route
-          ? "Editar ruta"
-          : "Nueva ruta"
+          isView
+
+          ? "Detalle de la ruta"
+
+          : route
+
+           ? "Editar ruta"
+
+           : "Nueva ruta"
+
         }
 
       </h2>
@@ -370,6 +382,8 @@ function RouteForm({
 
         }
 
+        disabled={isView}
+
         required
 
       />
@@ -388,6 +402,8 @@ function RouteForm({
         value={form.driverId}
 
         onChange={handleDriverChange}
+
+        disabled={isView}
 
       >
 
@@ -411,6 +427,7 @@ function RouteForm({
           ))
         }
 
+       
 
       </select>
 
@@ -429,6 +446,8 @@ function RouteForm({
         value={form.vehicleId}
 
         onChange={handleVehicleChange}
+
+        disabled={isView}
 
       >
 
@@ -452,7 +471,8 @@ function RouteForm({
           ))
         }
 
-
+       
+       
       </select>
 
 
@@ -471,6 +491,8 @@ function RouteForm({
 
         onChange={(e) =>
 
+
+
           setForm({
 
             ...form,
@@ -479,7 +501,11 @@ function RouteForm({
 
           })
 
+        
+
         }
+
+        disabled={isView}
 
       >
 
@@ -559,6 +585,8 @@ function RouteForm({
                     )
                   }
 
+                  disabled={isView}
+
                 />
 
 
@@ -602,10 +630,14 @@ function RouteForm({
 
         }
 
+        disabled={isView}
+
       />
 
 
 
+
+     {!isView && (
 
 
       <button
@@ -624,6 +656,8 @@ function RouteForm({
 
 
       </button>
+
+      )}
 
 
 
