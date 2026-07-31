@@ -20,6 +20,7 @@ const ordersCollection = collection(
 
 
 
+
 // Obtener pedidos por empresa
 
 export const getOrders = async (companyId) => {
@@ -89,6 +90,8 @@ export const getOrders = async (companyId) => {
 
 
 };
+
+
 
 
 
@@ -189,6 +192,8 @@ export const addOrder = async (
 
 
 
+
+
 // Actualizar pedido
 
 export const updateOrder = async (
@@ -229,6 +234,8 @@ export const updateOrder = async (
 
 
 
+
+
 // Eliminar pedido
 
 export const deleteOrder = async (id) => {
@@ -251,6 +258,124 @@ export const deleteOrder = async (id) => {
     orderRef
 
   );
+
+
+};
+
+
+
+
+
+
+
+
+
+// Obtener pedidos por IDs
+
+export const getOrdersByIds = async (
+
+  orderIds
+
+) => {
+
+
+  try {
+
+
+    if (
+
+      !orderIds ||
+
+      orderIds.length === 0
+
+    ) {
+
+      return [];
+
+    }
+
+
+
+    const ordersData = [];
+
+
+
+    for (const id of orderIds) {
+
+
+      const orderRef = doc(
+
+        db,
+
+        "orders",
+
+        id
+
+      );
+
+
+
+      const snapshot = await getDocs(
+
+        query(
+
+          ordersCollection,
+
+          where(
+
+            "__name__",
+
+            "==",
+
+            id
+
+          )
+
+        )
+
+      );
+
+
+
+      snapshot.forEach((item) => {
+
+
+        ordersData.push({
+
+          id: item.id,
+
+          ...item.data()
+
+        });
+
+
+      });
+
+
+    }
+
+
+
+    return ordersData;
+
+
+
+  } catch(error) {
+
+
+    console.error(
+
+      "Error obteniendo pedidos por IDs:",
+
+      error
+
+    );
+
+
+    throw error;
+
+
+  }
 
 
 };

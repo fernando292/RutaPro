@@ -100,11 +100,13 @@
 
 
 /* ================================= */
-/* CUADRO PEDIDOS DISPONIBLES */
+/* CUADRO PEDIDOS */
 /* ================================= */
 
 
 .orders-selection {
+
+  width: 100%;
 
   display: flex;
 
@@ -118,7 +120,7 @@
 
   min-height: 520px;
 
-  overflow-y: scroll;
+  overflow-y: auto;
 
   padding: 20px;
 
@@ -156,15 +158,24 @@
 
 
 
-/* Cada pedido dentro del cuadro */
+/* ================================= */
+/* TARJETA DE PEDIDO */
+/* ================================= */
+
 
 .order-checkbox {
 
+  width: 100%;
+
+  box-sizing: border-box;
+
   display: flex;
 
-  align-items: center;
+  flex-direction: column;
 
-  gap: 15px;
+  align-items: flex-start;
+
+  gap: 8px;
 
   cursor: pointer;
 
@@ -179,6 +190,8 @@
   border: 1px solid #E5E7EB;
 
   transition: .2s;
+
+  overflow: hidden;
 
 }
 
@@ -208,7 +221,40 @@
 
 
 
-/* Botón guardar */
+/* Información del pedido */
+
+.order-checkbox strong {
+
+  font-size: 16px;
+
+  color: #111827;
+
+}
+
+
+
+
+
+.order-checkbox p {
+
+  margin: 0;
+
+  font-size: 14px;
+
+  color: #374151;
+
+  width: 100%;
+
+}
+
+
+
+
+
+/* ================================= */
+/* BOTÓN GUARDAR */
+/* ================================= */
+
 
 .route-form button {
 
@@ -254,6 +300,11 @@
 
 
 
+
+
+/* ================================= */
+/* RESPONSIVE */
+/* ================================= */
 
 
 @media(max-width:768px){

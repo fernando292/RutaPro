@@ -77,12 +77,13 @@ export const assignOrdersToRoute = async (
 
 
 
-
 // Obtener pedidos disponibles para ruta
 
 export const getAvailableOrders = async (
 
-  companyId
+  companyId,
+
+  currentRouteId = null
 
 ) => {
 
@@ -124,7 +125,7 @@ export const getAvailableOrders = async (
     .map((item) => ({
 
 
-      id:item.id,
+      id: item.id,
 
 
       ...item.data()
@@ -132,7 +133,14 @@ export const getAvailableOrders = async (
 
     }))
 
-    .filter(order => !order.routeId);
+
+    .filter(order =>
+
+      !order.routeId ||
+
+      order.routeId === currentRouteId
+
+    );
 
 
 };

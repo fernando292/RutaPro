@@ -12,6 +12,10 @@ import {
   getAvailableOrders
 } from "../../services/routes/routeAssignmentService";
 
+import {
+  getOrdersByIds
+} from "../../services/orders/orderService";
+
 import { getDrivers } from "../../services/drivers/driverService";
 
 import { getVehicles } from "../../services/vehicles/vehicleService";
@@ -35,8 +39,10 @@ function RouteForm({
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [routeOrders, setRouteOrders] = useState([]);
 
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [assignedOrders, setAssignedOrders] = useState([]);
 
 
   const [form, setForm] = useState({
@@ -71,6 +77,8 @@ function RouteForm({
 
   useEffect(() => {
 
+    const loadRouteOrders = async () => {
+
     if (route) {
 
       setForm({
@@ -89,7 +97,59 @@ function RouteForm({
 
       });
 
+      const orderIds = Array.isArray(route.orders)
+
+        ?route.orders 
+
+        
+        : []
+
+
+        setSelectedOrders(orderIds);
+
+        if (orderIds.length > 0) {
+          const ordersData = await getOrdersByIds(
+            orderIds
+          );
+
+
+          setAssignedOrders(ordersData);
+
+      } else {
+
+        setAssignedOrders([]);
+
+      }
+        
+     
+
+    } else {
+
+       setSelectedOrders([]);
+       setAssignedOrders([]);
+
+
+
+       setForm({
+        routeNumber: "",
+
+        driverId: "",
+        driverName: "",
+
+        vehicleId: "",
+        vehiclePlate: "",
+
+        status: "Pendiente",
+        notes: ""
+
+      });
+         
+  
     }
+
+   };
+
+    loadRouteOrders();
 
   }, [route]);
 
@@ -111,7 +171,8 @@ function RouteForm({
 
 
       const ordersData = await getAvailableOrders(
-        profile.companyId
+        profile.companyId,
+        route?.id || null
       );
 
 
@@ -541,7 +602,12 @@ function RouteForm({
 
 
       <label>
-        Pedidos disponibles
+        {
+          isView
+          ? "Pedidos asignados"
+          : "Pedidos disponibles"
+        }
+
       </label>
 
 
@@ -550,7 +616,9 @@ function RouteForm({
 
 
         {
-          orders.length === 0 ? (
+          isView ? (
+
+           selectedOrders.length === 0 ? (
 
             <p>
               No hay pedidos disponibles
@@ -559,15 +627,59 @@ function RouteForm({
 
           ) : (
 
-            orders.map(order => (
+            assignedOrders.map(order => (
 
-              <label
+              <div
 
                 key={order.id}
 
                 className="order-checkbox"
 
               >
+
+
+              <strong> 
+                Pedido #{order.orderNumber}
+              </strong>
+
+              <p>
+                Cliente: {order.clientName}
+              </p>  
+
+              <p>
+                Dirección: {order.address}
+              </p>
+
+              <p>
+                Estado: {order.status}
+              </p>
+
+              <p>
+                Total: ${order.total}
+              </p>
+
+            </div>
+
+            ))
+
+          )
+
+          ) : (
+
+            orders.length === 0 ? (
+
+              <p>
+                No hay pedidos disponibles
+              </p>
+
+            ) : (
+
+              orders.map(order => (
+
+                <label
+                  key={order.id}
+                  className="order-checkbox"
+                >
 
                 <input
 
@@ -598,6 +710,8 @@ function RouteForm({
               </label>
 
             ))
+
+          )
 
           )
 

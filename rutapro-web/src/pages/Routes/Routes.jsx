@@ -16,16 +16,24 @@ import { useAuth } from "../../context/AuthContext";
 
 import "./Routes.css";
 
+
 function Routes() {
+
 
   const { profile } = useAuth();
 
+
   const [routes, setRoutes] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
+
   const [openModal, setOpenModal] = useState(false);
+
   const [selectedRoute, setSelectedRoute] = useState(null);
+
   const [modalMode, setModalMode] = useState("create");
+
 
 
 
@@ -41,6 +49,7 @@ function Routes() {
 
 
 
+
   const loadRoutes = async () => {
 
     try {
@@ -49,14 +58,18 @@ function Routes() {
         profile.companyId
       );
 
+
       setRoutes(data);
 
+
     } catch (error) {
+
 
       console.error(
         "Error cargando rutas:",
         error
       );
+
 
     } finally {
 
@@ -65,6 +78,8 @@ function Routes() {
     }
 
   };
+
+
 
 
 
@@ -79,6 +94,8 @@ function Routes() {
     await loadRoutes();
 
   };
+
+
 
 
 
@@ -102,13 +119,11 @@ function Routes() {
     {
       key: "totalOrders",
       label: "Pedidos",
-      
     },
 
     {
       key: "createdAt",
       label: "Fecha",
-
     },
 
     {
@@ -120,9 +135,12 @@ function Routes() {
 
 
 
+
+
   return (
 
     <div className="dashboard-layout">
+
 
       <Sidebar />
 
@@ -130,25 +148,31 @@ function Routes() {
 
       <div className="dashboard-main">
 
+
         <Topbar />
 
 
 
         <main className="routes-page">
 
+
           <div className="routes-header">
+
 
             <div>
 
-              <h1>Rutas</h1>
+              <h1>
+                Rutas
+              </h1>
+
 
               <p>
-
                 Gestiona las rutas de distribución.
-
               </p>
 
             </div>
+
+
 
 
 
@@ -158,9 +182,13 @@ function Routes() {
 
               onClick={() => {
 
+
+                setModalMode("create");
+
                 setSelectedRoute(null);
 
                 setOpenModal(true);
+
 
               }}
 
@@ -168,9 +196,14 @@ function Routes() {
 
               + Nueva ruta
 
+
             </button>
 
+
           </div>
+
+
+
 
 
 
@@ -181,14 +214,13 @@ function Routes() {
             ? (
 
               <p>
-
                 Cargando rutas...
-
               </p>
 
             )
 
             : (
+
 
               <Table
 
@@ -196,9 +228,11 @@ function Routes() {
 
                 data={routes}
 
+
                 actions={(route) => (
 
                   <div
+
                     style={{
 
                       display: "flex",
@@ -209,65 +243,80 @@ function Routes() {
 
                     }}
 
-                  > 
-
-                  <ButtonIcon
-
-                    icon={<Eye size={18} />}
-
-                    type="default"
-
-                    title="Ver"
-
-                    onClick={() => {
-
-                      setModalMode("view");
-
-                      setSelectedRoute(route);
-
-                      setOpenModal(true);
-
-                    }}
-
-                  />
+                  >
 
 
 
+                    <ButtonIcon
 
-                  <ButtonIcon
+                      icon={<Eye size={18} />}
 
-                    icon={<Pencil size={18} />}
+                      type="default"
 
-                    type="edit"
+                      title="Ver"
 
-                    title="Editar"
+                      onClick={() => {
 
-                    onClick={() => {
 
-                      setModalMode("edit");
+                        setModalMode("view");
 
-                      setSelectedRoute(route);
+                        setSelectedRoute(route);
 
-                      setOpenModal(true);
+                        setOpenModal(true);
 
-                    }}
 
-                  />
+                      }}
 
-                </div>
+                    />
 
+
+
+
+
+                    <ButtonIcon
+
+                      icon={<Pencil size={18} />}
+
+                      type="edit"
+
+                      title="Editar"
+
+                      onClick={() => {
+
+
+                        setModalMode("edit");
+
+                        setSelectedRoute(route);
+
+                        setOpenModal(true);
+
+
+                      }}
+
+                    />
+
+
+                  </div>
 
                 )}
 
               />
 
+
             )
 
           }
 
+
+
+
         </main>
 
+
       </div>
+
+
+
 
 
 
@@ -275,15 +324,22 @@ function Routes() {
 
         isOpen={openModal}
 
+
         onClose={() => {
+
 
           setOpenModal(false);
 
           setSelectedRoute(null);
 
+          setModalMode("create");
+
+
         }}
 
       >
+
+
 
         <RouteForm
 
@@ -295,12 +351,18 @@ function Routes() {
 
         />
 
+
+
       </Modal>
+
+
 
     </div>
 
   );
 
+
 }
+
 
 export default Routes;
