@@ -15,6 +15,7 @@ import Inventory from "../pages/Inventory/Inventory";
 import Drivers from "../pages/Drivers/Drivers";
 import Vehicles from "../pages/Vehicles/Vehicles";
 import RoutesPage from "../pages/Routes/Routes";
+import Map from "../pages/dashboard/Map";
 
 import Reports from "../pages/Reports/Reports";
 import Settings from "../pages/Settings/Settings";
@@ -218,7 +219,23 @@ function AppRouter() {
 
           }
 
-        />    
+        />
+
+        <Route
+
+          path="/map"
+
+          element={
+
+            <ProtectedRoute>
+
+              <Map />
+
+            </ProtectedRoute>
+            
+          }
+
+        />      
 
 
         <Route

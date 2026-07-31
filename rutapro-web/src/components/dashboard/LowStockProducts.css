@@ -1,0 +1,115 @@
+.low-stock-card{
+
+  background:#FFFFFF;
+
+  border:1px solid #E5E7EB;
+
+  border-radius:18px;
+
+  padding:24px;
+
+  box-shadow:0 10px 30px rgba(15,23,42,.06);
+
+}
+
+.low-stock-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:20px;
+
+}
+
+.low-stock-header h3{
+
+  margin:0;
+
+  color:#0F172A;
+
+  font-size:20px;
+
+}
+
+.low-stock-header span{
+
+  color:#64748B;
+
+  font-size:14px;
+
+}
+
+.low-stock-list{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+
+}
+
+.low-stock-item{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:16px;
+
+  border-radius:12px;
+
+  background:#F8FAFC;
+
+  border:1px solid #E5E7EB;
+
+}
+
+.low-stock-item h4{
+
+  margin:0;
+
+  font-size:16px;
+
+  color:#0F172A;
+
+}
+
+.low-stock-item p{
+
+  margin-top:4px;
+
+  color:#64748B;
+
+  font-size:13px;
+
+}
+
+.low-stock-badge{
+
+  background:#FEE2E2;
+
+  color:#DC2626;
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  font-weight:700;
+
+}
+
+.low-stock-empty{
+
+  text-align:center;
+
+  padding:40px;
+
+  color:#64748B;
+
+}

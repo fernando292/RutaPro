@@ -274,6 +274,10 @@ function Table({
 
                         {
 
+                           column.render
+                          ? column.render(row[column.key], row)
+                          :
+
                           formatValue(
 
                             row[column.key]

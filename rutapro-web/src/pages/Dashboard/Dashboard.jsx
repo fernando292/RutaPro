@@ -15,6 +15,11 @@ import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 import StatCard from "../../components/dashboard/StatCard";
 
+import SalesChart from "../../components/dashboard/charts/SalesChart";
+import OrdersStatusChart from "../../components/dashboard/charts/OrdersStatusChart";
+import RecentOrders from "../../components/dashboard/RecentOrders";
+import LowStockProducts from "../../components/dashboard/LowStockProducts";
+
 import { useAuth } from "../../context/AuthContext";
 import { getDashboardStats } from "../../services/dashboard/dashboardService";
 
@@ -40,7 +45,15 @@ function Dashboard() {
 
     totalDrivers: 0,
 
-    totalVehicles: 0
+    totalVehicles: 0,
+
+    salesLast7Days: [],
+
+    ordersByStatus: [],
+
+    recentOrders: [],
+
+    lowStockProducts: []
 
   });
 
@@ -88,11 +101,15 @@ function Dashboard() {
         <main className="dashboard-content">
 
           <h1>
+
             Bienvenido a RutaPro 👋
+
           </h1>
 
           <p className="dashboard-subtitle">
+
             Aquí tienes un resumen de la actividad de tu empresa.
+
           </p>
 
           <div className="stats-grid">
@@ -143,6 +160,42 @@ function Dashboard() {
               title="Conductores"
               value={stats.totalDrivers}
               icon={<UserRound size={28} />}
+            />
+
+          </div>
+
+          <div className="dashboard-charts">
+
+            <SalesChart
+              data={stats.salesLast7Days}
+            />
+
+            <OrdersStatusChart
+              data={stats.ordersByStatus}
+            />
+
+          </div>
+
+          <div
+            style={{
+              marginTop: "30px"
+            }}
+          >
+
+            <RecentOrders
+              orders={stats.recentOrders}
+            />
+
+          </div>
+
+          <div
+            style={{
+              marginTop: "30px"
+            }}
+          >
+
+            <LowStockProducts
+              products={stats.lowStockProducts}
             />
 
           </div>

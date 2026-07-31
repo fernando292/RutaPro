@@ -43,7 +43,12 @@ function Features() {
 
 
   return (
-    <section className="features">
+    <section
+
+     id="caracteristicas"
+     className="features"
+     
+    >
 
       <div className="features-header">
 

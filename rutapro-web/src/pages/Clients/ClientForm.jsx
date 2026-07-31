@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+
 import { useAuth } from "../../context/AuthContext";
 
 import {
   addClient,
   updateClient
 } from "../../services/clients/clientService";
+
+import { getCoordinates } from "../../services/maps/geocodingService";
 
 import "./ClientForm.css";
 
@@ -13,6 +16,7 @@ function ClientForm({
   onSuccess,
   client
 }) {
+
 
   const { profile } = useAuth();
 
@@ -73,7 +77,6 @@ function ClientForm({
     }
 
 
-
   }, [client]);
 
 
@@ -94,6 +97,8 @@ function ClientForm({
 
 
   };
+
+
 
 
 
@@ -121,6 +126,7 @@ function ClientForm({
       if (client) {
 
 
+
         await updateClient(
 
           client.id,
@@ -134,20 +140,88 @@ function ClientForm({
       } else {
 
 
+
+        let coordinates = {
+
+          latitude: null,
+
+          longitude: null
+
+        };
+
+
+
+        if (form.address) {
+
+
+
+          const result = await getCoordinates(
+
+            form.address,
+
+            form.city
+
+          );
+
+          console.log(
+            "DIRECCION ENVIADA AL MAPA:",
+            `${form.address}, ${form.city}, Colombia`
+          );
+
+
+
+          console.log(
+
+            "Resultado coordenadas:",
+
+            result
+
+          );
+
+
+
+          if (result) {
+
+
+            coordinates = result;
+
+
+          }
+
+
+        }
+
+
+
+
+
+
         await addClient(
-            
+
+
           {
 
-          ...form,
 
-          createdAt: new Date(),
+            ...form,
 
-         },
+
+            latitude: coordinates.latitude,
+
+
+            longitude: coordinates.longitude,
+
+
+            createdAt: new Date(),
+
+
+          },
+
 
           profile.companyId
 
 
         );
+
 
 
       }
@@ -157,7 +231,6 @@ function ClientForm({
 
 
       onSuccess();
-
 
 
 
@@ -173,6 +246,7 @@ function ClientForm({
       );
 
 
+
     } finally {
 
 
@@ -183,6 +257,8 @@ function ClientForm({
 
 
   };
+
+
 
 
 
@@ -205,13 +281,21 @@ function ClientForm({
 
       <h2>
 
+
         {
+
           client
+
           ? "Editar cliente"
+
           : "Nuevo cliente"
+
         }
 
+
       </h2>
+
+
 
 
 
@@ -235,6 +319,8 @@ function ClientForm({
 
 
 
+
+
       <input
 
         name="phone"
@@ -248,6 +334,8 @@ function ClientForm({
         required
 
       />
+
+
 
 
 
@@ -271,6 +359,8 @@ function ClientForm({
 
 
 
+
+
       <input
 
         name="address"
@@ -282,6 +372,8 @@ function ClientForm({
         onChange={handleChange}
 
       />
+
+
 
 
 
@@ -304,6 +396,8 @@ function ClientForm({
 
 
 
+
+
       <select
 
         name="status"
@@ -316,16 +410,23 @@ function ClientForm({
 
 
         <option value="Activo">
+
           Activo
+
         </option>
 
 
+
         <option value="Inactivo">
+
           Inactivo
+
         </option>
 
 
       </select>
+
+
 
 
 
@@ -339,6 +440,7 @@ function ClientForm({
         disabled={loading}
 
       >
+
 
 
         {
@@ -356,7 +458,10 @@ function ClientForm({
         }
 
 
+
       </button>
+
+
 
 
 

@@ -122,6 +122,13 @@ function Sidebar() {
 
         </NavLink>
 
+        <NavLink to="/map">
+
+          🗺️ Mapa logístico
+
+        </NavLink>
+
+
 
         <NavLink to="/reports">
 

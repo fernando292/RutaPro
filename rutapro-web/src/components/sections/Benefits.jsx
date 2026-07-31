@@ -31,7 +31,12 @@ function Benefits() {
 
 
   return (
-    <section className="benefits">
+    <section
+    
+     id="soluciones"
+     className="benefits"
+     
+    >
 
       <div className="benefits-header">
 

@@ -1,0 +1,53 @@
+.orders-status-card{
+
+  background:#FFFFFF;
+
+  border:1px solid #E5E7EB;
+
+  border-radius:18px;
+
+  padding:24px;
+
+  box-shadow:0 10px 30px rgba(15,23,42,.06);
+
+}
+
+.orders-status-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:24px;
+
+}
+
+.orders-status-header h3{
+
+  margin:0;
+
+  font-size:20px;
+
+  color:#0F172A;
+
+}
+
+.orders-status-header span{
+
+  color:#64748B;
+
+  font-size:14px;
+
+}
+
+@media(max-width:768px){
+
+  .orders-status-card{
+
+    padding:18px;
+
+  }
+
+}
