@@ -2,6 +2,7 @@ import { Bell } from "lucide-react";
 
 import "./NotificationBell.css";
 
+
 function NotificationBell({
 
   count = 0,
@@ -10,7 +11,9 @@ function NotificationBell({
 
 }) {
 
+
   return (
+
 
     <button
 
@@ -20,26 +23,39 @@ function NotificationBell({
 
     >
 
+
       <Bell size={22} />
+
+
 
       {
 
+
         count > 0 && (
 
-          <span className="notification-count">
+
+          <span className="notification-badge">
+
 
             {count}
 
+
           </span>
+
 
         )
 
+
       }
 
+
+
     </button>
+
 
   );
 
 }
+
 
 export default NotificationBell;

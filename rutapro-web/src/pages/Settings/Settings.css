@@ -1,39 +1,117 @@
 .settings-page {
 
-  padding:35px;
+  padding: 35px;
 
 }
+
 
 
 .settings-page h1 {
 
-  font-size:34px;
+  font-size: 34px;
 
-  color:#0f172a;
+  color: #0f172a;
+
+  margin-bottom: 8px;
 
 }
 
 
 
-.settings-page p {
+.settings-page > p {
+
+  color: #64748b;
+
+  margin-bottom: 30px;
+
+}
+
+
+
+
+
+/* GRID GENERAL */
+
+.settings-container {
+
+  display: grid;
+
+  grid-template-columns: repeat(
+
+    auto-fit,
+
+    minmax(320px, 1fr)
+
+  );
+
+  gap: 25px;
+
+}
+
+
+
+
+
+
+/* TARJETAS */
+
+.settings-card {
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow:
+
+    0 10px 25px rgba(
+
+      15,
+
+      23,
+
+      42,
+
+      .06
+
+    );
+
+}
+
+
+
+
+
+.settings-card h2 {
+
+  font-size: 20px;
+
+  color: #0f172a;
+
+  margin-bottom: 20px;
+
+}
+
+
+
+.settings-card span {
 
   color:#64748b;
 
-  margin-bottom:30px;
+  font-size:14px;
 
 }
 
 
 
+
+
+/* FORMULARIO EMPRESA */
+
 .settings-form {
-
-  background:white;
-
-  padding:30px;
-
-  border-radius:15px;
-
-  max-width:600px;
 
   display:flex;
 
@@ -45,23 +123,63 @@
 
 
 
+
+
 .settings-form input {
 
-  padding:12px;
+
+  padding:13px 14px;
 
   border:1px solid #cbd5e1;
 
-  border-radius:8px;
+  border-radius:10px;
 
   font-size:15px;
+
+  outline:none;
+
+  transition:.2s;
+
 
 }
 
 
 
+.settings-form input:focus {
+
+
+  border-color:#2563eb;
+
+  box-shadow:
+
+    0 0 0 3px rgba(
+
+      37,
+
+      99,
+
+      235,
+
+      .15
+
+    );
+
+
+}
+
+
+
+
+
+/* BOTON */
+
+
 .settings-form button {
 
-  padding:13px;
+
+  margin-top:10px;
+
+  padding:14px;
 
   background:#2563eb;
 
@@ -69,10 +187,56 @@
 
   border:none;
 
-  border-radius:8px;
+  border-radius:10px;
 
   cursor:pointer;
 
   font-size:16px;
+
+  font-weight:600;
+
+  transition:.2s;
+
+
+}
+
+
+
+.settings-form button:hover {
+
+
+  background:#1d4ed8;
+
+
+}
+
+
+
+
+
+/* SECCIONES FUTURAS */
+
+
+.settings-option {
+
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:15px 0;
+
+  border-bottom:1px solid #e2e8f0;
+
+
+}
+
+
+
+.settings-option:last-child {
+
+  border-bottom:none;
 
 }

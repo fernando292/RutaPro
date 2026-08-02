@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 
+
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
@@ -20,6 +21,7 @@ import Map from "../pages/dashboard/Map";
 import Reports from "../pages/Reports/Reports";
 import Settings from "../pages/Settings/Settings";
 import Admin from "../pages/Admin/Admin";
+
 import NotFound from "../pages/NotFound/NotFound";
 
 
@@ -30,7 +32,6 @@ function AppRouter() {
   return (
 
     <BrowserRouter>
-
 
       <Routes>
 
@@ -47,7 +48,6 @@ function AppRouter() {
         />
 
 
-
         <Route
 
           path="/login"
@@ -55,7 +55,6 @@ function AppRouter() {
           element={<Login />}
 
         />
-
 
 
         <Route
@@ -68,11 +67,7 @@ function AppRouter() {
 
 
 
-
-
-        {/* PROTEGIDAS */}
-
-
+        {/* DASHBOARD */}
 
 
         <Route
@@ -93,6 +88,7 @@ function AppRouter() {
 
 
 
+        {/* PRODUCTOS */}
 
 
         <Route
@@ -101,7 +97,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Bodega"
+
+              ]}
+
+            >
 
               <Products />
 
@@ -113,6 +119,7 @@ function AppRouter() {
 
 
 
+        {/* CLIENTES */}
 
 
         <Route
@@ -121,7 +128,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Vendedor"
+
+              ]}
+
+            >
 
               <Clients />
 
@@ -133,6 +150,7 @@ function AppRouter() {
 
 
 
+        {/* PEDIDOS */}
 
 
         <Route
@@ -141,7 +159,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Vendedor"
+
+              ]}
+
+            >
 
               <Orders />
 
@@ -153,6 +181,7 @@ function AppRouter() {
 
 
 
+        {/* INVENTARIO */}
 
 
         <Route
@@ -161,7 +190,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Bodega"
+
+              ]}
+
+            >
 
               <Inventory />
 
@@ -171,7 +210,10 @@ function AppRouter() {
 
         />
 
-        
+
+
+        {/* CONDUCTORES */}
+
 
         <Route
 
@@ -179,9 +221,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
 
-             <Drivers />
+              roles={[
+
+                "Administrador"
+
+              ]}
+
+            >
+
+              <Drivers />
 
             </ProtectedRoute>
 
@@ -189,13 +239,26 @@ function AppRouter() {
 
         />
 
+
+
+        {/* VEHICULOS */}
+
+
         <Route
 
-          path="/vehicles" 
-          
+          path="/vehicles"
+
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador"
+
+              ]}
+
+            >
 
               <Vehicles />
 
@@ -203,7 +266,12 @@ function AppRouter() {
 
           }
 
-        />  
+        />
+
+
+
+        {/* RUTAS */}
+
 
         <Route
 
@@ -211,7 +279,17 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Conductor"
+
+              ]}
+
+            >
 
               <RoutesPage />
 
@@ -221,21 +299,40 @@ function AppRouter() {
 
         />
 
+
+
+        {/* MAPA */}
+
+
         <Route
 
           path="/map"
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador",
+
+                "Conductor"
+
+              ]}
+
+            >
 
               <Map />
 
             </ProtectedRoute>
-            
+
           }
 
-        />      
+        />
+
+
+
+        {/* REPORTES */}
 
 
         <Route
@@ -244,7 +341,15 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador"
+
+              ]}
+
+            >
 
               <Reports />
 
@@ -256,6 +361,7 @@ function AppRouter() {
 
 
 
+        {/* CONFIGURACION */}
 
 
         <Route
@@ -264,7 +370,15 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador"
+
+              ]}
+
+            >
 
               <Settings />
 
@@ -276,6 +390,7 @@ function AppRouter() {
 
 
 
+        {/* ADMIN USUARIOS */}
 
 
         <Route
@@ -284,7 +399,15 @@ function AppRouter() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              roles={[
+
+                "Administrador"
+
+              ]}
+
+            >
 
               <Admin />
 
@@ -296,9 +419,7 @@ function AppRouter() {
 
 
 
-
-
-        {/* RUTA NO ENCONTRADA */}
+        {/* NO ENCONTRADA */}
 
 
         <Route
@@ -310,9 +431,7 @@ function AppRouter() {
         />
 
 
-
       </Routes>
-
 
     </BrowserRouter>
 

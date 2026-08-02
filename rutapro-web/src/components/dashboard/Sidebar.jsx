@@ -1,22 +1,26 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
+import { useAuth } from "../../context/AuthContext";
+
 import { logout } from "../../services/auth/authService";
 
 import "./Sidebar.css";
 
 
-function Sidebar() {
+function Sidebar(){
 
 
   const navigate = useNavigate();
 
 
+  const { profile, company } = useAuth();
 
 
-  const handleLogout = async () => {
+
+  const handleLogout = async()=>{
 
 
-    try {
+    try{
 
 
       await logout();
@@ -24,10 +28,13 @@ function Sidebar() {
       navigate("/login");
 
 
-    } catch(error) {
+    }catch(error){
 
 
-      console.error(error);
+      console.error(
+        "Error cerrando sesión:",
+        error
+      );
 
 
     }
@@ -38,18 +45,226 @@ function Sidebar() {
 
 
 
+  const role = profile?.role;
+
+
+
+  const brandName =
+
+    company?.branding?.commercialName ||
+
+    company?.name ||
+
+    "RutaPro";
+
+
+
+  const logo =
+
+    company?.branding?.logo || "";
+
+
+
+  const color =
+
+    company?.branding?.primaryColor ||
+
+    "#2563eb";
+
+
+
+
+  const menuItems=[
+
+
+    {
+      path:"/dashboard",
+      label:"📊 Dashboard",
+      roles:[
+        "Administrador",
+        "Vendedor",
+        "Bodega",
+        "Conductor"
+      ]
+    },
+
+
+    {
+      path:"/clients",
+      label:"👥 Clientes",
+      roles:[
+        "Administrador",
+        "Vendedor"
+      ]
+    },
+
+
+    {
+      path:"/orders",
+      label:"📦 Pedidos",
+      roles:[
+        "Administrador",
+        "Vendedor"
+      ]
+    },
+
+
+    {
+      path:"/products",
+      label:"📋 Productos",
+      roles:[
+        "Administrador",
+        "Bodega"
+      ]
+    },
+
+
+    {
+      path:"/inventory",
+      label:"📦 Inventario",
+      roles:[
+        "Administrador",
+        "Bodega"
+      ]
+    },
+
+
+    {
+      path:"/drivers",
+      label:"🚚 Conductores",
+      roles:[
+        "Administrador"
+      ]
+    },
+
+
+    {
+      path:"/vehicles",
+      label:"🚛 Vehículos",
+      roles:[
+        "Administrador"
+      ]
+    },
+
+
+    {
+      path:"/routes",
+      label:"🗺️ Rutas",
+      roles:[
+        "Administrador",
+        "Conductor"
+      ]
+    },
+
+
+    {
+      path:"/map",
+      label:"🗺️ Mapa logístico",
+      roles:[
+        "Administrador",
+        "Conductor"
+      ]
+    },
+
+
+    {
+      path:"/reports",
+      label:"📈 Reportes",
+      roles:[
+        "Administrador"
+      ]
+    },
+
+
+    {
+      path:"/settings",
+      label:"⚙️ Configuración",
+      roles:[
+        "Administrador"
+      ]
+    },
+
+
+    {
+      path:"/admin",
+      label:"👤 Usuarios",
+      roles:[
+        "Administrador"
+      ]
+    }
+
+
+  ];
+
+
+
 
 
   return (
 
-    <aside className="sidebar">
+
+    <aside
+
+      className="sidebar"
+
+      style={{
+
+        "--primary-color":color
+
+      }}
+
+    >
+
 
 
       <div className="sidebar-logo">
 
+
+        {
+
+          logo ? (
+
+
+            <img
+
+              src={logo}
+
+              alt={brandName}
+
+              className="company-logo"
+
+              onError={(e)=>{
+
+                e.target.style.display="none";
+
+              }}
+
+            />
+
+
+          ):(
+
+
+            <div className="company-letter">
+
+              {brandName.charAt(0).toUpperCase()}
+
+            </div>
+
+
+          )
+
+        }
+
+
+
         <h2>
-          Ruta<span>Pro</span>
+
+          {brandName}
+
         </h2>
+
+
 
       </div>
 
@@ -61,91 +276,43 @@ function Sidebar() {
       <nav className="sidebar-menu">
 
 
+        {
 
-        <NavLink to="/dashboard">
+          menuItems
 
-          📊 Dashboard
+          .filter(item =>
 
-        </NavLink>
+            item.roles.includes(role)
 
+          )
 
-
-
-        <NavLink to="/clients">
-
-          👥 Clientes
-
-        </NavLink>
+          .map(item=>(
 
 
+            <NavLink
+
+              key={item.path}
+
+              to={item.path}
+
+              className={({isActive})=>
+
+                isActive ? "active" : ""
+
+              }
+
+            >
+
+              {item.label}
 
 
-        <NavLink to="/orders">
-
-          📦 Pedidos
-
-        </NavLink>
+            </NavLink>
 
 
+          ))
 
 
-        <NavLink to="/products">
-
-          📋 Productos
-
-        </NavLink>
-
-
-
-
-        <NavLink to="/inventory">
-
-          📦 Inventario
-
-        </NavLink>
-
-        <NavLink to="/drivers">
-
-          🚚 Conductores
-
-        </NavLink>
-
-        <NavLink to="/vehicles">
-
-          🚛 Vehículos
-
-        </NavLink>
-
-        <NavLink to="/routes">
-
-         🗺️ Rutas
-
-        </NavLink>
-
-        <NavLink to="/map">
-
-          🗺️ Mapa logístico
-
-        </NavLink>
-
-
-
-        <NavLink to="/reports">
-
-          📈 Reportes
-
-        </NavLink>
-
-
-
-
-        <NavLink to="/settings">
-
-          ⚙️ Configuración
-
-        </NavLink>
-
-
+        }
 
 
       </nav>
@@ -176,6 +343,7 @@ function Sidebar() {
 
 
   );
+
 
 }
 

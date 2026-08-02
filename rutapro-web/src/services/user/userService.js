@@ -4,7 +4,9 @@ import {
   getDocs,
   query,
   where,
-  limit
+  limit,
+  updateDoc,
+  doc
 } from "firebase/firestore";
 
 
@@ -23,7 +25,6 @@ const usersCollection = collection(
 
 export const createUserProfile = async (user) => {
 
-
   return await addDoc(
 
     usersCollection,
@@ -31,7 +32,6 @@ export const createUserProfile = async (user) => {
     user
 
   );
-
 
 };
 
@@ -58,7 +58,6 @@ export const getUserProfile = async (uid) => {
   );
 
 
-
   const snapshot = await getDocs(q);
 
 
@@ -81,6 +80,77 @@ export const getUserProfile = async (uid) => {
     ...data.data()
 
   };
+
+
+};
+
+
+
+
+// Obtener usuarios de una empresa
+
+export const getUsersByCompany = async (companyId) => {
+
+
+  const q = query(
+
+    usersCollection,
+
+    where(
+      "companyId",
+      "==",
+      companyId
+    )
+
+  );
+
+
+  const snapshot = await getDocs(q);
+
+
+
+  return snapshot.docs.map((item)=>({
+
+    id:item.id,
+
+    ...item.data()
+
+  }));
+
+};
+
+
+
+
+// Actualizar usuario
+
+export const updateUserProfile = async (
+
+  id,
+
+  data
+
+)=>{
+
+
+  const userRef = doc(
+
+    db,
+
+    "users",
+
+    id
+
+  );
+
+
+  return await updateDoc(
+
+    userRef,
+
+    data
+
+  );
 
 
 };
