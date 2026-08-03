@@ -5,30 +5,24 @@ import {
   useState
 } from "react";
 
-
 import {
   onAuthStateChanged
 } from "firebase/auth";
-
 
 import {
   auth
 } from "../config/firebase";
 
-
 import {
   getUserProfile
 } from "../services/user/userService";
-
 
 import {
   getCompanyById
 } from "../services/companies/companyService";
 
 
-
 const AuthContext = createContext();
-
 
 
 export function AuthProvider({ children }) {
@@ -44,8 +38,6 @@ export function AuthProvider({ children }) {
 
 
 
-
-
   useEffect(() => {
 
 
@@ -53,7 +45,7 @@ export function AuthProvider({ children }) {
 
       auth,
 
-      async(currentUser) => {
+      async(currentUser)=>{
 
 
         try {
@@ -82,7 +74,7 @@ export function AuthProvider({ children }) {
 
 
             console.log(
-              "AUTH PROFILE:",
+              "PROFILE ENCONTRADO:",
               userData
             );
 
@@ -94,10 +86,7 @@ export function AuthProvider({ children }) {
 
 
 
-
-
             if(userData?.companyId){
-
 
 
               const companyData = await getCompanyById(
@@ -107,16 +96,13 @@ export function AuthProvider({ children }) {
               );
 
 
-
               console.log(
-                "EMPRESA CONTEXTO:",
+                "DATOS FIRESTORE EMPRESA:",
                 companyData
               );
 
 
-
               setCompany(companyData);
-
 
 
             }else{
@@ -129,10 +115,7 @@ export function AuthProvider({ children }) {
 
 
 
-
-
           }else{
-
 
 
             setUser(null);
@@ -140,7 +123,6 @@ export function AuthProvider({ children }) {
             setProfile(null);
 
             setCompany(null);
-
 
 
           }
@@ -151,13 +133,9 @@ export function AuthProvider({ children }) {
 
 
           console.error(
-
             "Error cargando autenticación:",
-
             error
-
           );
-
 
 
           setUser(null);
@@ -165,7 +143,6 @@ export function AuthProvider({ children }) {
           setProfile(null);
 
           setCompany(null);
-
 
 
         }finally{
@@ -179,31 +156,21 @@ export function AuthProvider({ children }) {
 
       }
 
-
     );
 
 
-
-    return () => unsubscribe();
-
+    return ()=>unsubscribe();
 
 
-  }, []);
-
-
-
-
+  },[]);
 
 
 
   return (
 
-
     <AuthContext.Provider
 
-
       value={{
-
 
         user,
 
@@ -213,18 +180,13 @@ export function AuthProvider({ children }) {
 
         loading
 
-
       }}
-
 
     >
 
-
       {children}
 
-
     </AuthContext.Provider>
-
 
   );
 
@@ -233,14 +195,8 @@ export function AuthProvider({ children }) {
 
 
 
-
-
-
-
 export function useAuth(){
 
-
   return useContext(AuthContext);
-
 
 }

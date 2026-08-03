@@ -16,7 +16,13 @@
 
   background: transparent;
 
+  border: none;
+
+  cursor: pointer;
+
   transition: 0.2s ease;
+
+  color: var(--text-primary);
 
 }
 
@@ -41,5 +47,13 @@
 .button-icon.delete {
 
   color: var(--error);
+
+}
+
+
+
+.button-icon.default {
+
+  color: var(--text-primary);
 
 }

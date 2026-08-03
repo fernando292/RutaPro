@@ -9,7 +9,6 @@ import {
   doc
 } from "firebase/firestore";
 
-
 import { db } from "../../config/firebase";
 
 
@@ -19,22 +18,16 @@ const usersCollection = collection(
 );
 
 
-
-
 // Crear perfil de usuario
 
 export const createUserProfile = async (user) => {
 
   return await addDoc(
-
     usersCollection,
-
     user
-
   );
 
 };
-
 
 
 
@@ -43,47 +36,68 @@ export const createUserProfile = async (user) => {
 export const getUserProfile = async (uid) => {
 
 
-  const q = query(
-
-    usersCollection,
-
-    where(
-      "uid",
-      "==",
-      uid
-    ),
-
-    limit(1)
-
-  );
+  let attempts = 0;
 
 
-  const snapshot = await getDocs(q);
+  while(attempts < 5){
+
+
+    const q = query(
+
+      usersCollection,
+
+      where(
+        "uid",
+        "==",
+        uid
+      ),
+
+      limit(1)
+
+    );
+
+
+    const snapshot = await getDocs(q);
 
 
 
-  if(snapshot.empty){
+    if(!snapshot.empty){
 
-    return null;
+
+      const data = snapshot.docs[0];
+
+
+      return {
+
+        id:data.id,
+
+        ...data.data()
+
+      };
+
+
+    }
+
+
+
+    attempts++;
+
+
+    await new Promise(
+
+      resolve => setTimeout(resolve,1000)
+
+    );
+
 
   }
 
 
 
-  const data = snapshot.docs[0];
-
-
-  return {
-
-    id:data.id,
-
-    ...data.data()
-
-  };
+  return null;
 
 
 };
-
 
 
 
@@ -118,7 +132,6 @@ export const getUsersByCompany = async (companyId) => {
   }));
 
 };
-
 
 
 

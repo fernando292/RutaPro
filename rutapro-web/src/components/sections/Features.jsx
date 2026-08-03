@@ -1,100 +1,183 @@
 import "./Features.css";
 
+
 function Features() {
 
+
   const features = [
+
+
     {
-      icon: "📦",
-      title: "Gestión de pedidos",
+      icon:"📦",
+      title:"Gestión de pedidos",
       description:
-        "Recibe, organiza y controla pedidos desde un solo panel."
+      "Administra pedidos, estados y seguimiento desde un panel centralizado."
     },
+
+
     {
-      icon: "🏪",
-      title: "Administración de tiendas",
+      icon:"🏪",
+      title:"Gestión de clientes",
       description:
-        "Gestiona clientes, tiendas y su historial de compras."
+      "Mantén organizada la información de tiendas y clientes comerciales."
     },
+
+
     {
-      icon: "📊",
-      title: "Reportes inteligentes",
+      icon:"📊",
+      title:"Reportes empresariales",
       description:
-        "Analiza ventas, productos más vendidos y crecimiento."
+      "Obtén información clave sobre ventas, productos y rendimiento."
     },
+
+
     {
-      icon: "📋",
-      title: "Control de inventario",
+      icon:"📋",
+      title:"Control de inventario",
       description:
-        "Conoce tus existencias y evita faltantes de productos."
+      "Supervisa existencias y evita problemas de abastecimiento."
     },
+
+
     {
-      icon: "🗺️",
-      title: "Rutas de entrega",
+      icon:"🗺️",
+      title:"Planificación de rutas",
       description:
-        "Organiza recorridos y mejora los tiempos de entrega."
+      "Optimiza recorridos y mejora la eficiencia de las entregas."
     },
+
+
     {
-      icon: "🔔",
-      title: "Notificaciones",
+      icon:"🔔",
+      title:"Comunicación inteligente",
       description:
-        "Mantén informados a clientes y repartidores."
+      "Mantén informados a clientes y equipos de distribución."
     }
+
+
   ];
 
 
+
+
   return (
+
+
     <section
 
-     id="caracteristicas"
-     className="features"
-     
+      id="funciones"
+
+      className="features"
+
     >
+
+
 
       <div className="features-header">
 
+
         <span>
-          Funciones del sistema
+
+          Funciones de RutaPro
+
         </span>
 
+
+
+
         <h2>
-          Todo lo que tu distribución necesita
+
+          Todas las herramientas
+
+          para controlar tu operación
+
         </h2>
 
+
+
+
         <p>
-          Una plataforma completa para administrar
-          pedidos, clientes e inventario.
+
+          Una plataforma diseñada para empresas
+
+          distribuidoras que buscan crecer y organizar
+
+          su logística.
+
         </p>
 
+
+
       </div>
+
+
+
+
 
 
       <div className="features-grid">
 
-        {features.map((feature, index) => (
 
-          <div className="feature-card" key={index}>
+        {
 
-            <div className="feature-icon">
-              {feature.icon}
+          features.map((feature,index)=>(
+
+
+            <div
+
+              className="feature-card"
+
+              key={index}
+
+            >
+
+
+
+              <div className="feature-icon">
+
+                {feature.icon}
+
+              </div>
+
+
+
+
+              <h3>
+
+                {feature.title}
+
+              </h3>
+
+
+
+
+              <p>
+
+                {feature.description}
+
+              </p>
+
+
+
             </div>
 
-            <h3>
-              {feature.title}
-            </h3>
 
-            <p>
-              {feature.description}
-            </p>
+          ))
 
-          </div>
+        }
 
-        ))}
 
       </div>
 
 
+
     </section>
+
+
   );
+
+
 }
+
 
 export default Features;

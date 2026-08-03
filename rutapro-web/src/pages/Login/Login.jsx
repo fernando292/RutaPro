@@ -2,20 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { login } from "../../services/auth/authService";
-
 import { useAuth } from "../../context/AuthContext";
+
+import Input from "../../components/UI/Input/Input";
+import Button from "../../components/UI/Button/Button";
 
 import "./Login.css";
 
 
 function Login() {
 
-
   const navigate = useNavigate();
 
   const { user, profile } = useAuth();
-
-
 
   const [email, setEmail] = useState("");
 
@@ -26,71 +25,41 @@ function Login() {
   const [error, setError] = useState("");
 
 
-
   useEffect(() => {
-
 
     if (user && profile) {
 
-
       navigate("/dashboard");
 
-
     }
-
 
   }, [user, profile, navigate]);
 
 
 
-
   const handleSubmit = async (e) => {
-
 
     e.preventDefault();
 
-
     setError("");
-
-
 
     try {
 
-
       setLoading(true);
 
-
-
-      await login(
-
-        email,
-
-        password
-
-      );
-
-
+      await login(email, password);
 
     } catch(error) {
 
-
       console.error(error);
 
-
-      setError(
-
-        "Correo o contraseña incorrectos."
-
-      );
-
+      setError("Correo o contraseña incorrectos.");
 
     } finally {
-
 
       setLoading(false);
 
     }
-
 
   };
 
@@ -121,7 +90,7 @@ function Login() {
         <form onSubmit={handleSubmit}>
 
 
-          <input
+          <Input
 
             type="email"
 
@@ -129,18 +98,15 @@ function Login() {
 
             value={email}
 
-            onChange={(e)=>
-
-              setEmail(e.target.value)
-
-            }
+            onChange={(e)=>setEmail(e.target.value)}
 
             required
 
           />
 
 
-          <input
+
+          <Input
 
             type="password"
 
@@ -148,11 +114,7 @@ function Login() {
 
             value={password}
 
-            onChange={(e)=>
-
-              setPassword(e.target.value)
-
-            }
+            onChange={(e)=>setPassword(e.target.value)}
 
             required
 
@@ -160,41 +122,29 @@ function Login() {
 
 
 
-          {
+          {error && (
 
-            error && (
+            <p className="error">
 
-              <p className="error">
+              {error}
 
-                {error}
+            </p>
 
-              </p>
-
-            )
-
-          }
+          )}
 
 
 
-          <button
+          <Button
 
             type="submit"
 
-            disabled={loading}
+            loading={loading}
 
           >
 
-            {
+            Iniciar sesión
 
-              loading
-
-              ? "Ingresando..."
-
-              : "Iniciar sesión"
-
-            }
-
-          </button>
+          </Button>
 
 
         </form>

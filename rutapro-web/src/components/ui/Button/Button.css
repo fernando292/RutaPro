@@ -1,0 +1,175 @@
+.rp-button{
+
+    border:none;
+
+    outline:none;
+
+    cursor:pointer;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    user-select:none;
+
+}
+
+.rp-button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.rp-button:active{
+
+    transform:scale(.98);
+
+}
+
+.rp-button:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+}
+
+/* ---------- Tamaños ---------- */
+
+.rp-sm{
+
+    padding:8px 16px;
+
+    font-size:14px;
+
+}
+
+.rp-md{
+
+    padding:12px 22px;
+
+    font-size:15px;
+
+}
+
+.rp-lg{
+
+    padding:15px 30px;
+
+    font-size:16px;
+
+}
+
+/* ---------- Variantes ---------- */
+
+.rp-primary{
+
+    background:#2563EB;
+
+    color:white;
+
+}
+
+.rp-primary:hover{
+
+    background:#1D4ED8;
+
+}
+
+.rp-secondary{
+
+    background:#F1F5F9;
+
+    color:#1E293B;
+
+}
+
+.rp-secondary:hover{
+
+    background:#E2E8F0;
+
+}
+
+.rp-success{
+
+    background:#16A34A;
+
+    color:white;
+
+}
+
+.rp-success:hover{
+
+    background:#15803D;
+
+}
+
+.rp-danger{
+
+    background:#DC2626;
+
+    color:white;
+
+}
+
+.rp-danger:hover{
+
+    background:#B91C1C;
+
+}
+
+.rp-warning{
+
+    background:#F59E0B;
+
+    color:white;
+
+}
+
+.rp-warning:hover{
+
+    background:#D97706;
+
+}
+
+.rp-outline{
+
+    background:white;
+
+    color:#2563EB;
+
+    border:2px solid #2563EB;
+
+}
+
+.rp-outline:hover{
+
+    background:#EFF6FF;
+
+}
+
+.rp-ghost{
+
+    background:transparent;
+
+    color:#2563EB;
+
+}
+
+.rp-ghost:hover{
+
+    background:#EFF6FF;
+
+}

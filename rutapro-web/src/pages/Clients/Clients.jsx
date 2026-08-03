@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, Pencil } from "lucide-react";
 
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
@@ -34,13 +34,14 @@ function Clients() {
 
   const [selectedClient, setSelectedClient] = useState(null);
 
+  const [viewClient, setViewClient] = useState(null);
 
 
 
 
   useEffect(() => {
 
-    if (profile?.companyId) {
+    if(profile?.companyId){
 
       loadClients();
 
@@ -52,22 +53,18 @@ function Clients() {
 
 
 
-
   const loadClients = async () => {
 
     try {
-
 
       const data = await getClients(
         profile.companyId
       );
 
-
       setClients(data);
 
 
     } catch(error) {
-
 
       console.error(
         "Error cargando clientes:",
@@ -77,9 +74,7 @@ function Clients() {
 
     } finally {
 
-
       setLoading(false);
-
 
     }
 
@@ -96,6 +91,9 @@ function Clients() {
     setOpenModal(false);
 
     setSelectedClient(null);
+
+    setViewClient(null);
+
 
     await loadClients();
 
@@ -116,7 +114,7 @@ function Clients() {
     );
 
 
-    if (!confirmDelete) return;
+    if(!confirmDelete) return;
 
 
 
@@ -149,36 +147,99 @@ function Clients() {
 
 
 
+  const openCreateModal = () => {
+
+
+    setSelectedClient(null);
+
+    setViewClient(null);
+
+    setOpenModal(true);
+
+
+  };
+
+
+
+
+
+
+  const openEditModal = (client) => {
+
+
+    setViewClient(null);
+
+    setSelectedClient(client);
+
+    setOpenModal(true);
+
+
+  };
+
+
+
+
+
+
+  const openViewModal = (client) => {
+
+
+    setSelectedClient(null);
+
+    setViewClient(client);
+
+    setOpenModal(true);
+
+
+  };
+
+
+
+
+
+
+  const closeModal = () => {
+
+
+    setOpenModal(false);
+
+    setSelectedClient(null);
+
+    setViewClient(null);
+
+
+  };
+
+
+
+
+
+
 
   const columns = [
 
-
     {
-      key: "name",
-      label: "Cliente"
+      key:"name",
+      label:"Cliente"
     },
 
-
     {
-      key: "phone",
-      label: "Teléfono"
+      key:"phone",
+      label:"Teléfono"
     },
 
-
     {
-      key: "address",
-      label: "Dirección"
+      key:"address",
+      label:"Dirección"
     },
 
-
     {
-      key: "createdAt",
-      label: "Fecha"
+      key:"createdAt",
+      label:"Fecha"
     }
-
-
+     
+    
   ];
-
 
 
 
@@ -191,7 +252,6 @@ function Clients() {
 
 
       <Sidebar />
-
 
 
       <div className="dashboard-main">
@@ -229,13 +289,7 @@ function Clients() {
 
               className="add-client-button"
 
-              onClick={() => {
-
-                setSelectedClient(null);
-
-                setOpenModal(true);
-
-              }}
+              onClick={openCreateModal}
 
             >
 
@@ -254,42 +308,32 @@ function Clients() {
 
 
           {
-
             loading ? (
-
 
               <p>
                 Cargando clientes...
               </p>
 
 
-
             ) : (
-
-
+             
 
               <Table
 
-
                 columns={columns}
-
 
                 data={clients}
 
 
-
-                actions={(client) => (
-
+                actions={(client) =>(
 
 
                   <div
 
                     style={{
-
                       display:"flex",
-
-                      gap:"10px"
-
+                      gap:"10px",
+                      alignItems:"center"
                     }}
 
                   >
@@ -299,32 +343,40 @@ function Clients() {
 
                     <ButtonIcon
 
-
                       icon={
                         <Eye size={18}/>
                       }
 
+                      type="default"
 
                       title="Ver cliente"
 
-
-
                       onClick={() => {
 
-
-                        setSelectedClient(client);
-
-                        setOpenModal(true);
-
+                        openViewModal(client);
 
                       }}
-
 
                     />
 
 
+                    <ButtonIcon
+                      icon={
+                        <Pencil size={18}/>
+                      }
 
+                      type="edit"
 
+                      title="Editar cliente"
+
+                      onClick={() => {
+
+                        openEditModal(client);
+
+                      }}
+                      
+                    />
+                      
 
 
                     <ButtonIcon
@@ -334,21 +386,15 @@ function Clients() {
                         <Trash2 size={18}/>
                       }
 
-
-
                       type="delete"
-
-
 
                       title="Eliminar"
 
+                      onClick={() => {
 
+                        handleDelete(client.id);
 
-                      onClick={() =>
-                        handleDelete(client.id)
-                      }
-
-
+                      }}
 
                     />
 
@@ -358,22 +404,14 @@ function Clients() {
                   </div>
 
 
-
                 )}
-
-
 
               />
 
 
-
             )
 
-
           }
-
-
-
 
 
 
@@ -382,9 +420,7 @@ function Clients() {
 
 
 
-
       </div>
-
 
 
 
@@ -398,21 +434,10 @@ function Clients() {
         isOpen={openModal}
 
 
-
-        onClose={() => {
-
-
-          setOpenModal(false);
-
-          setSelectedClient(null);
-
-
-        }}
-
+        onClose={closeModal}
 
 
       >
-
 
 
 
@@ -421,26 +446,62 @@ function Clients() {
           selectedClient ? (
 
 
+            <ClientForm
+
+              client={selectedClient}
+
+              onSuccess={handleSuccess}
+
+            />
+
+
+
+          ) : viewClient ? (
+
+
             <div>
+
 
               <h2>
                 Detalle del cliente
               </h2>
 
 
+
               <p>
-                Nombre: {selectedClient.name}
+                Nombre: {viewClient.name}
               </p>
 
 
+
               <p>
-                Teléfono: {selectedClient.phone}
+                Teléfono: {viewClient.phone}
               </p>
 
 
+
               <p>
-                Dirección: {selectedClient.address}
+                Correo: {viewClient.email || "No registrado"}
               </p>
+
+
+
+              <p>
+                Dirección: {viewClient.address}
+              </p>
+
+
+
+              <p>
+                Ciudad: {viewClient.city}
+              </p>
+
+
+
+              <p>
+                Estado: {viewClient.status}
+              </p>
+
 
 
             </div>
@@ -460,9 +521,7 @@ function Clients() {
           )
 
 
-
         }
-
 
 
 
@@ -472,15 +531,13 @@ function Clients() {
 
 
 
-
-
     </div>
 
 
   );
 
-}
 
+}
 
 
 export default Clients;

@@ -1,90 +1,160 @@
 import "./Benefits.css";
 
+
 function Benefits() {
 
+
   const benefits = [
+
     {
-      icon: "📦",
-      title: "Pedidos inteligentes",
+      icon:"📦",
+      title:"Gestión inteligente de pedidos",
       description:
-        "Gestiona pedidos de tus tiendas de forma rápida y organizada."
+      "Recibe, organiza y controla pedidos de tus clientes desde una sola plataforma."
     },
+
+
     {
-      icon: "🏪",
-      title: "Control de clientes",
+      icon:"🏪",
+      title:"Clientes centralizados",
       description:
-        "Administra todas tus tiendas y clientes desde un solo lugar."
+      "Administra tiendas, información comercial e historial de pedidos fácilmente."
     },
+
+
     {
-      icon: "📊",
-      title: "Reportes y análisis",
+      icon:"📊",
+      title:"Información para decidir",
       description:
-        "Conoce tus ventas, productos más vendidos y crecimiento."
+      "Visualiza ventas, inventario y comportamiento de tu operación en tiempo real."
     },
+
+
     {
-      icon: "🚚",
-      title: "Rutas optimizadas",
+      icon:"🚚",
+      title:"Distribución optimizada",
       description:
-        "Organiza entregas y mejora los tiempos de distribución."
+      "Planea rutas de entrega y mejora los tiempos de operación logística."
     }
+
   ];
 
 
+
   return (
+
+
     <section
-    
-     id="soluciones"
-     className="benefits"
-     
+
+      id="soluciones"
+
+      className="benefits"
+
     >
+
+
 
       <div className="benefits-header">
 
+
         <span>
-          Todo lo que necesitas
+
+          Soluciones empresariales
+
         </span>
 
+
+
         <h2>
-          Una plataforma creada
-          para distribuidores modernos
+
+          Todo tu negocio logístico
+
+          en una sola plataforma
+
         </h2>
 
+
+
         <p>
-          RutaPro centraliza pedidos,
-          inventario y entregas para que
-          tu negocio crezca.
+
+          RutaPro conecta pedidos, clientes,
+
+          inventario y distribución para ayudarte
+
+          a operar de forma más eficiente.
+
         </p>
 
+
       </div>
+
+
+
 
 
       <div className="benefits-grid">
 
-        {benefits.map((item, index) => (
 
-          <div className="benefit-card" key={index}>
+        {
 
-            <div className="benefit-icon">
-              {item.icon}
+          benefits.map((item,index)=>(
+
+
+            <div
+
+              className="benefit-card"
+
+              key={index}
+
+            >
+
+
+
+              <div className="benefit-icon">
+
+                {item.icon}
+
+              </div>
+
+
+
+
+              <h3>
+
+                {item.title}
+
+              </h3>
+
+
+
+
+              <p>
+
+                {item.description}
+
+              </p>
+
+
+
             </div>
 
-            <h3>
-              {item.title}
-            </h3>
 
-            <p>
-              {item.description}
-            </p>
+          ))
 
-          </div>
+        }
 
-        ))}
 
       </div>
 
 
+
     </section>
+
+
   );
+
+
 }
+
 
 export default Benefits;

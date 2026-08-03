@@ -3,35 +3,39 @@ import { useNavigate } from "react-router-dom";
 
 import { registerCompany } from "../../services/register/registerService";
 
+import Input from "../../components/UI/Input/Input";
+import Button from "../../components/UI/Button/Button";
+
 import "./Register.css";
+
 
 function Register() {
 
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-
     companyName: "",
-
     phone: "",
-
     adminName: "",
-
     email: "",
-
     password: "",
-
     confirmPassword: ""
-
   });
+
 
   const [loading, setLoading] = useState(false);
 
+
+
   const handleChange = (e) => {
 
-    const { name, value } = e.target;
+    const {
+      name,
+      value
+    } = e.target;
 
-    setForm((prev) => ({
+
+    setForm((prev)=>({
 
       ...prev,
 
@@ -41,25 +45,21 @@ function Register() {
 
   };
 
-  const handleSubmit = async (e) => {
+
+
+  const handleSubmit = async(e)=>{
 
     e.preventDefault();
 
-    if (
 
+    if(
       !form.companyName ||
-
       !form.phone ||
-
       !form.adminName ||
-
       !form.email ||
-
       !form.password ||
-
       !form.confirmPassword
-
-    ) {
+    ){
 
       alert("Completa todos los campos.");
 
@@ -67,7 +67,9 @@ function Register() {
 
     }
 
-    if (form.password !== form.confirmPassword) {
+
+
+    if(form.password !== form.confirmPassword){
 
       alert("Las contraseñas no coinciden.");
 
@@ -75,21 +77,32 @@ function Register() {
 
     }
 
-    setLoading(true);
 
-    try {
+
+    try{
+
+      setLoading(true);
+
 
       await registerCompany(form);
 
-      navigate("/dashboard");
 
-    } catch (error) {
+      // Firebase actualizará AuthContext automáticamente
+      // No hacemos navigate aquí
 
-      console.error(error);
+
+    }catch(error){
+
+      console.error(
+        "Error registrando empresa:",
+        error
+      );
+
 
       alert(error.message);
 
-    } finally {
+
+    }finally{
 
       setLoading(false);
 
@@ -97,11 +110,15 @@ function Register() {
 
   };
 
+
+
   return (
 
     <div className="register-page">
 
+
       <div className="register-card">
+
 
         <h1>
 
@@ -109,11 +126,14 @@ function Register() {
 
         </h1>
 
+
         <p>
 
           Crea tu empresa y comienza a usar RutaPro.
 
         </p>
+
+
 
         <form
 
@@ -123,7 +143,8 @@ function Register() {
 
         >
 
-          <input
+
+          <Input
 
             type="text"
 
@@ -139,7 +160,9 @@ function Register() {
 
           />
 
-          <input
+
+
+          <Input
 
             type="tel"
 
@@ -155,7 +178,9 @@ function Register() {
 
           />
 
-          <input
+
+
+          <Input
 
             type="text"
 
@@ -171,7 +196,9 @@ function Register() {
 
           />
 
-          <input
+
+
+          <Input
 
             type="email"
 
@@ -187,7 +214,9 @@ function Register() {
 
           />
 
-          <input
+
+
+          <Input
 
             type="password"
 
@@ -203,7 +232,9 @@ function Register() {
 
           />
 
-          <input
+
+
+          <Input
 
             type="password"
 
@@ -219,47 +250,35 @@ function Register() {
 
           />
 
-          <button
+
+
+          <Button
 
             type="submit"
 
-            disabled={loading}
+            loading={loading}
 
           >
 
-            {
+            Crear cuenta
 
-              loading
+          </Button>
 
-                ? "Creando empresa..."
-
-                : "Crear cuenta"
-
-            }
-
-          </button>
 
         </form>
 
-        <p>
+
+
+
+        <p className="register-login">
+
 
           ¿Ya tienes cuenta?
 
+
           <span
 
-            onClick={() => navigate("/login")}
-
-            style={{
-
-              cursor: "pointer",
-
-              color: "#2563EB",
-
-              fontWeight: "600",
-
-              marginLeft: "6px"
-
-            }}
+            onClick={()=>navigate("/login")}
 
           >
 
@@ -267,14 +286,18 @@ function Register() {
 
           </span>
 
+
         </p>
 
+
       </div>
+
 
     </div>
 
   );
 
 }
+
 
 export default Register;

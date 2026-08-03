@@ -3,76 +3,53 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 
-function ProtectedRoute({ children, roles }) {
+function ProtectedRoute({children, roles}){
 
 
-  const {
-    user,
-    profile,
-    loading
-  } = useAuth();
-
-
-
-  if (loading) {
-
-    return <div>Cargando sesión...</div>;
-
-  }
+const {
+user,
+profile,
+loading
+}=useAuth();
 
 
 
-  if (!user) {
+if(loading){
 
-    return (
+return <div>Cargando sesión...</div>;
 
-      <Navigate
-
-        to="/login"
-
-        replace
-
-      />
-
-    );
-
-  }
+}
 
 
 
-  if (!profile) {
+if(!user){
 
-    return <div>Cargando perfil...</div>;
+return <Navigate to="/login" replace/>;
 
-  }
-
-
-
-  if (
-
-    roles &&
-
-    !roles.includes(profile.role)
-
-  ) {
-
-    return (
-
-      <Navigate
-
-        to="/dashboard"
-
-        replace
-
-      />
-
-    );
-
-  }
+}
 
 
 
-  return children;
+if(!profile){
+
+return <div>Cargando perfil...</div>;
+
+}
+
+
+
+if(
+roles &&
+!roles.includes(profile.role)
+){
+
+return <Navigate to="/dashboard" replace/>;
+
+}
+
+
+
+return children;
 
 
 }

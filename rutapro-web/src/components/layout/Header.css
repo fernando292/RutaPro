@@ -1,52 +1,203 @@
 .header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 80px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+
+  width:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:22px 80px;
+
+  background:white;
+
+  border-bottom:1px solid #e5e7eb;
+
+  position:sticky;
+
+  top:0;
+
+  z-index:100;
+
 }
+
+
+
+/* LOGO */
 
 .logo {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--text-primary);
+
+  font-size:30px;
+
+  font-weight:800;
+
+  color:#111827;
+
+  cursor:pointer;
+
+  letter-spacing:-1px;
+
 }
+
+
 
 .logo span {
-  color: var(--primary);
+
+  color:#2563eb;
+
 }
+
+
+
+
+
+/* MENU */
 
 .nav {
-  display: flex;
-  gap: 32px;
+
+  display:flex;
+
+  gap:35px;
+
 }
+
+
 
 .nav a {
-  color: var(--text-secondary);
-  font-weight: 500;
+
+  text-decoration:none;
+
+  color:#64748b;
+
+  font-size:15px;
+
+  font-weight:500;
+
+  transition:.25s;
+
 }
+
+
 
 .nav a:hover {
-  color: var(--primary);
+
+  color:#2563eb;
+
 }
+
+
+
+
+
+/* BOTONES */
 
 .header-buttons {
-  display: flex;
-  gap: 16px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:15px;
+
 }
+
+
+
+
 
 .btn-login {
-  background: transparent;
-  color: var(--primary);
-  font-weight: 600;
+
+  background:transparent;
+
+  border:none;
+
+  color:#2563eb;
+
+  font-weight:600;
+
+  padding:12px 20px;
+
+  cursor:pointer;
+
+  border-radius:10px;
+
+  transition:.25s;
+
 }
 
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
+
+
+.btn-login:hover {
+
+  background:#eff6ff;
+
+}
+
+
+
+
+
+
+
+.btn-register {
+
+  background:#2563eb;
+
+  color:white;
+
+  border:none;
+
+  padding:13px 24px;
+
+  border-radius:10px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.25s;
+
+}
+
+
+
+.btn-register:hover {
+
+  background:#1d4ed8;
+
+  transform:translateY(-2px);
+
+}
+
+
+
+
+
+@media(max-width:900px){
+
+
+  .header{
+
+    padding:20px 25px;
+
+  }
+
+
+
+  .nav{
+
+    display:none;
+
+  }
+
+
+
+  .logo{
+
+    font-size:26px;
+
+  }
+
+
 }

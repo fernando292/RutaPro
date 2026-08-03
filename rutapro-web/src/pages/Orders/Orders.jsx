@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, Pencil } from "lucide-react";
 
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
@@ -26,8 +26,6 @@ function Orders() {
 
   const { profile } = useAuth();
 
-  console.log("EMPRESA PEDIDOS:", profile);
-
 
   const [orders, setOrders] = useState([]);
 
@@ -37,31 +35,38 @@ function Orders() {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  const [viewOrder, setViewOrder] = useState(null);
 
 
 
 
   useEffect(() => {
 
-    if (profile?.companyId) {
-    loadOrders();
+    if(profile?.companyId){
+
+      loadOrders();
+
     }
+
   }, [profile?.companyId]);
 
 
 
 
 
-  const loadOrders = async () => {
 
-    try {
+  const loadOrders = async()=>{
 
-      const data = await getOrders(profile.companyId);
+    try{
+
+      const data = await getOrders(
+        profile.companyId
+      );
 
       setOrders(data);
 
 
-    } catch(error) {
+    }catch(error){
 
       console.error(
         "Error cargando pedidos:",
@@ -69,7 +74,7 @@ function Orders() {
       );
 
 
-    } finally {
+    }finally{
 
       setLoading(false);
 
@@ -81,9 +86,15 @@ function Orders() {
 
 
 
-  const handleSuccess = async () => {
+
+
+  const handleSuccess = async()=>{
 
     setOpenModal(false);
+
+    setSelectedOrder(null);
+
+    setViewOrder(null);
 
     await loadOrders();
 
@@ -93,7 +104,9 @@ function Orders() {
 
 
 
-  const handleDelete = async (id) => {
+
+
+  const handleDelete = async(id)=>{
 
 
     const confirmDelete = window.confirm(
@@ -101,29 +114,26 @@ function Orders() {
     );
 
 
-    if (!confirmDelete) return;
+    if(!confirmDelete) return;
 
 
 
-    try {
+    try{
+
 
       await deleteOrder(id);
 
       await loadOrders();
 
 
-
-    } catch(error) {
-
+    }catch(error){
 
       console.error(
         "Error eliminando pedido:",
         error
       );
 
-
     }
-
 
   };
 
@@ -133,38 +143,33 @@ function Orders() {
 
 
 
-  const columns = [
 
+  const columns=[
 
     {
-      key: "orderNumber",
-      label: "Pedido"
+      key:"orderNumber",
+      label:"Pedido"
     },
 
-
     {
-      key: "status",
-      label: "Estado"
+      key:"status",
+      label:"Estado"
     },
 
-
     {
-      key: "address",
-      label: "Dirección"
+      key:"address",
+      label:"Dirección"
     },
 
-
     {
-      key: "total",
-      label: "Total"
+      key:"total",
+      label:"Total"
     },
 
-
     {
-      key: "createdAt",
-      label: "Fecha"
+      key:"createdAt",
+      label:"Fecha"
     }
-
 
   ];
 
@@ -179,26 +184,20 @@ function Orders() {
     <div className="dashboard-layout">
 
 
-
       <Sidebar />
 
 
-
       <div className="dashboard-main">
-
 
 
         <Topbar />
 
 
 
-
         <main className="orders-page">
 
 
-
           <div className="orders-header">
-
 
 
             <div>
@@ -212,7 +211,6 @@ function Orders() {
                 Gestiona los pedidos de clientes.
               </p>
 
-
             </div>
 
 
@@ -223,9 +221,11 @@ function Orders() {
 
               className="add-order-button"
 
-              onClick={() => {
+              onClick={()=>{
 
                 setSelectedOrder(null);
+
+                setViewOrder(null);
 
                 setOpenModal(true);
 
@@ -239,8 +239,6 @@ function Orders() {
             </button>
 
 
-
-
           </div>
 
 
@@ -250,42 +248,31 @@ function Orders() {
 
 
           {
-
             loading ? (
-
 
               <p>
                 Cargando pedidos...
               </p>
 
 
-
             ) : (
-
 
 
               <Table
 
-
                 columns={columns}
-
 
                 data={orders}
 
 
-
-                actions={(order) => (
-
+                actions={(order)=>(
 
 
                   <div
 
                     style={{
-
                       display:"flex",
-
                       gap:"10px"
-
                     }}
 
                   >
@@ -293,30 +280,28 @@ function Orders() {
 
 
 
-                    <ButtonIcon
 
+                    <ButtonIcon
 
                       icon={
                         <Eye size={18}/>
                       }
 
-
                       title="Ver pedido"
 
+                      onClick={()=>{
 
+                        setViewOrder(order);
 
-                      onClick={() => {
-
-
-                        setSelectedOrder(order);
+                        setSelectedOrder(null);
 
                         setOpenModal(true);
 
-
                       }}
 
-
                     />
+
+
 
 
 
@@ -324,38 +309,55 @@ function Orders() {
 
                     <ButtonIcon
 
+                      icon={
+                        <Pencil size={18}/>
+                      }
+
+                      type="edit"
+
+                      title="Editar pedido"
+
+                      onClick={()=>{
+
+                        setSelectedOrder(order);
+
+                        setViewOrder(null);
+
+                        setOpenModal(true);
+
+                      }}
+
+                    />
+
+
+
+
+
+
+
+                    <ButtonIcon
 
                       icon={
                         <Trash2 size={18}/>
                       }
 
-
-
                       type="delete"
-
-
 
                       title="Eliminar"
 
+                      onClick={()=>{
 
+                        handleDelete(order.id);
 
-                      onClick={() =>
-                        handleDelete(order.id)
-                      }
-
-
+                      }}
 
                     />
-
-
 
 
                   </div>
 
 
                 )}
-
-
 
               />
 
@@ -367,13 +369,7 @@ function Orders() {
 
 
 
-
-
-
         </main>
-
-
-
 
 
       </div>
@@ -384,31 +380,24 @@ function Orders() {
 
 
 
-
-
       <Modal
-
 
 
         isOpen={openModal}
 
 
-
-        onClose={() => {
-
+        onClose={()=>{
 
           setOpenModal(false);
 
           setSelectedOrder(null);
 
+          setViewOrder(null);
 
         }}
 
 
-
       >
-
-
 
 
 
@@ -417,15 +406,25 @@ function Orders() {
           selectedOrder ? (
 
 
-            <OrderDetail
+            <OrderForm
 
               order={selectedOrder}
 
               onSuccess={handleSuccess}
 
-
             />
 
+
+          ) : viewOrder ? (
+
+
+            <OrderDetail
+
+              order={viewOrder}
+
+              onSuccess={handleSuccess}
+
+            />
 
 
           ) : (
@@ -440,17 +439,11 @@ function Orders() {
 
           )
 
-
         }
 
 
 
-
-
       </Modal>
-
-
-
 
 
 

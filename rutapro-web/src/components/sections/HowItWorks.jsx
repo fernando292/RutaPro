@@ -1,91 +1,179 @@
 import "./HowItWorks.css";
 
+
 function HowItWorks() {
 
+
   const steps = [
+
+
     {
-      number: "01",
-      icon: "🏪",
-      title: "La tienda realiza su pedido",
+      number:"01",
+      icon:"🏪",
+      title:"Tus clientes realizan pedidos",
       description:
-        "Las tiendas pueden solicitar productos fácilmente desde la plataforma."
+      "Las tiendas solicitan productos de forma rápida y organizada desde la plataforma."
     },
+
+
     {
-      number: "02",
-      icon: "📦",
-      title: "El distribuidor gestiona",
+      number:"02",
+      icon:"📦",
+      title:"Tu equipo administra la operación",
       description:
-        "El administrador recibe pedidos, organiza inventario y prepara entregas."
+      "Gestiona pedidos, inventario y preparación de entregas desde un solo sistema."
     },
+
+
     {
-      number: "03",
-      icon: "🚚",
-      title: "Entrega inteligente",
+      number:"03",
+      icon:"🚚",
+      title:"Realiza entregas eficientes",
       description:
-        "Los repartidores siguen rutas organizadas y actualizan el estado del pedido."
+      "Organiza rutas, controla estados y mejora los tiempos de distribución."
     }
+
+
   ];
 
 
-  return (
-    <section 
 
-      id="funciones"
+
+  return (
+
+
+    <section
+
       className="how-it-works"
-      
+
     >
+
+
+
 
       <div className="how-header">
 
+
+
         <span>
-          Cómo funciona
+
+          Cómo funciona RutaPro
+
         </span>
 
+
+
+
         <h2>
-          Todo el proceso
-          en un solo lugar
+
+          Digitaliza tu proceso
+
+          de distribución
+
         </h2>
 
+
+
+
         <p>
-          RutaPro conecta tiendas,
-          distribuidores y repartidores
-          para hacer la distribución más eficiente.
+
+          Conecta clientes, pedidos,
+
+          inventario y entregas en un flujo
+
+          simple y eficiente.
+
         </p>
 
+
+
       </div>
+
+
+
+
+
 
 
       <div className="steps-container">
 
-        {steps.map((step, index) => (
 
-          <div className="step-card" key={index}>
+        {
 
-            <div className="step-number">
-              {step.number}
+          steps.map((step,index)=>(
+
+
+            <div
+
+              className="step-card"
+
+              key={index}
+
+            >
+
+
+
+
+              <div className="step-number">
+
+                {step.number}
+
+              </div>
+
+
+
+
+
+              <div className="step-icon">
+
+                {step.icon}
+
+              </div>
+
+
+
+
+
+              <h3>
+
+                {step.title}
+
+              </h3>
+
+
+
+
+
+              <p>
+
+                {step.description}
+
+              </p>
+
+
+
             </div>
 
-            <div className="step-icon">
-              {step.icon}
-            </div>
 
-            <h3>
-              {step.title}
-            </h3>
+          ))
 
-            <p>
-              {step.description}
-            </p>
+        }
 
-          </div>
 
-        ))}
 
       </div>
 
 
+
+
+
     </section>
+
+
   );
+
+
 }
+
 
 export default HowItWorks;

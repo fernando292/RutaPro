@@ -1,136 +1,54 @@
 import { useNavigate } from "react-router-dom";
 
-import "./Hero.css";
+import Button from "../UI/Button/Button";
 
+import "./Hero.css";
 
 function Hero() {
 
   const navigate = useNavigate();
 
-
   return (
-
-    <section
-
-      id="inicio"
-
-      className="hero"
-
-    >
-
+    <section id="inicio" className="hero">
 
       <div className="hero-content">
 
-
         <span className="hero-tag">
-
           🚚 Gestión inteligente de distribución
-
         </span>
 
-
-
         <h1>
-
-          La forma inteligente
-
+          Controla toda tu operación logística
           <br />
-
-          de gestionar pedidos
-
+          desde un solo lugar
         </h1>
 
-
-
         <p>
-
-          RutaPro ayuda a distribuidores y tiendas
-
-          a organizar pedidos, inventario y entregas
-
-          desde un solo lugar.
-
+          RutaPro conecta pedidos, inventario,
+          clientes y rutas de entrega en una
+          plataforma diseñada para empresas
+          distribuidoras.
         </p>
-
-
-
 
         <div className="hero-buttons">
 
+          <Button onClick={() => navigate("/register")}>
+            Crear empresa gratis
+          </Button>
 
-
-          <button
-
-            onClick={() => navigate("/register")}
-
-            style={{
-
-              background: "#2563EB",
-
-              color: "#FFFFFF",
-
-              padding: "12px 24px",
-
-              borderRadius: "8px",
-
-              fontWeight: "600"
-
-            }}
-
-          >
-
-            Comenzar ahora
-
-          </button>
-
-
-
-
-
-          <button
-
-            className="btn-secondary"
-
+          <Button
+            variant="outline"
             onClick={() => navigate("/login")}
-
           >
-
-            Ver demo
-
-          </button>
-
-
-
+            Ver plataforma
+          </Button>
 
         </div>
 
-
-
       </div>
-
-
-
-
-
-      <div className="hero-image">
-
-
-        <div className="dashboard-card">
-
-          Panel RutaPro
-
-        </div>
-
-
-      </div>
-
-
 
     </section>
-
   );
-
 }
-
 
 export default Hero;

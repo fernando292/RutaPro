@@ -5,25 +5,33 @@ import "./Header.css";
 
 function Header() {
 
+
   const navigate = useNavigate();
+
 
 
   return (
 
+
     <header className="header">
+
 
 
       <div
 
         className="logo"
 
-        onClick={() => navigate("/")}
+        onClick={()=>navigate("/")}
 
       >
 
         Ruta<span>Pro</span>
 
+
       </div>
+
+
+
 
 
 
@@ -33,22 +41,33 @@ function Header() {
 
 
         <a href="#inicio">
+
           Inicio
+
         </a>
+
 
 
         <a href="#soluciones">
+
           Soluciones
+
         </a>
+
 
 
         <a href="#funciones">
+
           Funciones
+
         </a>
 
 
+
         <a href="#contacto">
+
           Contacto
+
         </a>
 
 
@@ -58,14 +77,18 @@ function Header() {
 
 
 
+
+
+
       <div className="header-buttons">
+
 
 
         <button
 
           className="btn-login"
 
-          onClick={() => navigate("/login")}
+          onClick={()=>navigate("/login")}
 
         >
 
@@ -79,27 +102,13 @@ function Header() {
 
         <button
 
-          className="btn-primary"
+          className="btn-register"
 
-          onClick={() => navigate("/register")}
-
-          style={{
-
-            background: "#2563EB",
-
-            color: "#FFFFFF",
-
-            padding: "12px 24px",
-
-            borderRadius: "8px",
-
-            fontWeight: "600"
-
-          }}
+          onClick={()=>navigate("/register")}
 
         >
 
-          Comenzar
+          Crear empresa
 
         </button>
 
@@ -109,11 +118,16 @@ function Header() {
 
 
 
+
+
     </header>
+
 
   );
 
+
 }
+
 
 
 export default Header;
