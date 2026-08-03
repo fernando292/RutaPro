@@ -6,7 +6,7 @@ import {
   updateDoc,
   doc,
   query,
-  where,
+  where
 } from "firebase/firestore";
 
 import { db } from "../../config/firebase";
@@ -16,140 +16,130 @@ const clientsCollection = collection(
   "clients"
 );
 
+// ===============================
+// CACHE
+// ===============================
 
+const cache = new Map();
 
-// Obtener clientes de la empresa
+export const clearClientsCache = (companyId) => {
 
-export const getClients = async (companyId) => {
+  cache.delete(companyId);
+
+};
+
+// ===============================
+// OBTENER CLIENTES
+// ===============================
+
+export const getClients = async (
+  companyId,
+  forceRefresh = false
+) => {
+
+  if (!companyId) return [];
+
+  if (!forceRefresh && cache.has(companyId)) {
+
+    return cache.get(companyId);
+
+  }
 
   const q = query(
-
     clientsCollection,
-
     where(
       "companyId",
       "==",
       companyId
     )
-
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((item) => ({
+  const clients = snapshot.docs.map((item) => ({
 
     id: item.id,
 
-    ...item.data(),
+    ...item.data()
 
   }));
 
+  cache.set(
+    companyId,
+    clients
+  );
+
+  return clients;
+
 };
 
-
-
-
-
-// Crear cliente
+// ===============================
+// CREAR CLIENTE
+// ===============================
 
 export const addClient = async (
-
   client,
   companyId
-
 ) => {
 
-  try {
+  const response = await addDoc(
+    clientsCollection,
+    {
 
-    const response = await addDoc(
+      ...client,
 
-      clientsCollection,
+      companyId
 
-      {
+    }
+  );
 
-        ...client,
+  clearClientsCache(companyId);
 
-        companyId,
-
-      }
-
-    );
-
-    console.log(
-      "Cliente creado:",
-      response.id
-    );
-
-    return response;
-
-  } catch (error) {
-
-    console.error(
-      "Error Firebase:",
-      error
-    );
-
-    throw error;
-
-  }
+  return response;
 
 };
 
-
-
-
-
-// Actualizar cliente
+// ===============================
+// ACTUALIZAR CLIENTE
+// ===============================
 
 export const updateClient = async (
-
   id,
   client
-
 ) => {
 
   const clientRef = doc(
-
     db,
-
     "clients",
-
     id
-
   );
 
-  return await updateDoc(
-
+  await updateDoc(
     clientRef,
-
     client
-
   );
+
+  clearClientsCache(client.companyId);
 
 };
 
+// ===============================
+// ELIMINAR CLIENTE
+// ===============================
 
-
-
-
-// Eliminar cliente
-
-export const deleteClient = async (id) => {
+export const deleteClient = async (
+  id,
+  companyId
+) => {
 
   const clientRef = doc(
-
     db,
-
     "clients",
-
     id
-
   );
 
-  return await deleteDoc(
+  await deleteDoc(clientRef);
 
-    clientRef
-
-  );
+  clearClientsCache(companyId);
 
 };

@@ -6,10 +6,15 @@ import {
   updateDoc,
   doc,
   query,
-  where
+  where,
+  orderBy,
+  limit,
+  serverTimestamp
 } from "firebase/firestore";
 
+
 import { db } from "../../config/firebase";
+
 
 
 const ordersCollection = collection(
@@ -21,17 +26,18 @@ const ordersCollection = collection(
 
 
 
-// Obtener pedidos por empresa
+// Obtener pedidos empresa
 
-export const getOrders = async (companyId) => {
-
-  try {
+export const getOrders = async(companyId)=>{
 
 
-    if (!companyId) {
+  try{
+
+
+    if(!companyId){
 
       console.warn(
-        "getOrders recibió companyId vacío"
+        "companyId vacío"
       );
 
       return [];
@@ -54,37 +60,122 @@ export const getOrders = async (companyId) => {
 
 
 
+
     const snapshot = await getDocs(q);
 
 
 
-    return snapshot.docs.map((item) => ({
+    return snapshot.docs.map(doc=>({
 
+      id:doc.id,
 
-      id: item.id,
-
-
-      ...item.data()
-
+      ...doc.data()
 
     }));
 
 
 
-  } catch(error) {
+  }catch(error){
+
+
+    console.error(
+      "Error obteniendo pedidos:",
+      error
+    );
+
+
+    throw error;
+
+
+  }
+
+
+};
+
+
+
+
+
+
+
+
+
+// Pedidos recientes dashboard
+
+export const getRecentOrders = async(
+
+ companyId,
+
+ limitNumber=5
+
+)=>{
+
+
+  try{
+
+
+    if(!companyId){
+
+      return [];
+
+    }
+
+
+
+
+    const q = query(
+
+      ordersCollection,
+
+      where(
+        "companyId",
+        "==",
+        companyId
+      ),
+
+      orderBy(
+        "createdAt",
+        "desc"
+      ),
+
+      limit(
+        limitNumber
+      )
+
+    );
+
+
+
+
+
+    const snapshot = await getDocs(q);
+
+
+
+    return snapshot.docs.map(doc=>({
+
+      id:doc.id,
+
+      ...doc.data()
+
+    }));
+
+
+
+
+  }catch(error){
 
 
     console.error(
 
-      "Error obteniendo pedidos:",
+      "Error pedidos recientes:",
 
       error
 
     );
 
 
-    throw error;
-
+    return [];
 
   }
 
@@ -101,87 +192,86 @@ export const getOrders = async (companyId) => {
 
 // Crear pedido
 
-export const addOrder = async (
+export const addOrder = async(
 
-  order,
+ order,
 
-  companyId
+ companyId
 
-) => {
-
-
-  try {
+)=>{
 
 
-    if (!companyId) {
-
-      throw new Error(
-        "No existe companyId para crear pedido"
-      );
-
-    }
+ try{
 
 
+  if(!companyId){
 
-    const newOrder = {
+    throw new Error(
+      "No existe companyId"
+    );
 
-
-      ...order,
-
-
-      companyId,
-
-
-      createdAt: new Date(),
-
-
-      orderNumber: Date.now()
-
-
-    };
+  }
 
 
 
-    const response = await addDoc(
+  const data={
+
+
+    ...order,
+
+
+    companyId,
+
+
+    status:
+      order.status || "Pendiente",
+
+
+    createdAt:
+      serverTimestamp(),
+
+
+    orderNumber:
+      Date.now()
+
+
+
+  };
+
+
+
+
+  const response =
+    await addDoc(
 
       ordersCollection,
 
-      newOrder
+      data
 
     );
 
 
 
-    console.log(
-
-      "Pedido creado correctamente:",
-
-      response.id
-
-    );
+  return response;
 
 
 
-    return response;
+ }catch(error){
 
 
+  console.error(
 
-  } catch(error) {
+    "Error creando pedido:",
 
+    error
 
-    console.error(
-
-      "Error creando pedido:",
-
-      error
-
-    );
+  );
 
 
-    throw error;
+  throw error;
 
 
-  }
+ }
 
 
 };
@@ -196,34 +286,41 @@ export const addOrder = async (
 
 // Actualizar pedido
 
-export const updateOrder = async (
+export const updateOrder = async(
 
-  id,
+ id,
 
-  order
+ order
 
-) => {
-
-
-  const orderRef = doc(
-
-    db,
-
-    "orders",
-
-    id
-
-  );
+)=>{
 
 
+ const ref = doc(
 
-  return updateDoc(
+   db,
 
-    orderRef,
+   "orders",
 
-    order
+   id
 
-  );
+ );
+
+
+
+ return updateDoc(
+
+   ref,
+
+   {
+
+    ...order,
+
+    updatedAt:
+      serverTimestamp()
+
+   }
+
+ );
 
 
 };
@@ -238,26 +335,21 @@ export const updateOrder = async (
 
 // Eliminar pedido
 
-export const deleteOrder = async (id) => {
+export const deleteOrder = async(id)=>{
 
 
-  const orderRef = doc(
+ const ref = doc(
 
-    db,
+   db,
 
-    "orders",
+   "orders",
 
-    id
+   id
 
-  );
+ );
 
 
-
-  return deleteDoc(
-
-    orderRef
-
-  );
+ return deleteDoc(ref);
 
 
 };
@@ -272,38 +364,32 @@ export const deleteOrder = async (id) => {
 
 // Obtener pedidos por IDs
 
-export const getOrdersByIds = async (
-
-  orderIds
-
-) => {
+export const getOrdersByIds = async(ids)=>{
 
 
-  try {
+ try{
 
 
-    if (
+  if(
+    !ids ||
+    ids.length===0
+  ){
 
-      !orderIds ||
+    return [];
 
-      orderIds.length === 0
-
-    ) {
-
-      return [];
-
-    }
+  }
 
 
 
-    const ordersData = [];
+  const result=[];
 
 
 
-    for (const id of orderIds) {
+  for(const id of ids){
 
 
-      const orderRef = doc(
+    const ref =
+      doc(
 
         db,
 
@@ -315,67 +401,60 @@ export const getOrdersByIds = async (
 
 
 
-      const snapshot = await getDocs(
-
+    const snapshot =
+      await getDocs(
         query(
-
           ordersCollection,
-
           where(
-
             "__name__",
-
             "==",
-
             id
-
           )
-
         )
-
       );
 
 
 
-      snapshot.forEach((item) => {
+    snapshot.forEach(item=>{
 
 
-        ordersData.push({
+      result.push({
 
-          id: item.id,
+        id:item.id,
 
-          ...item.data()
-
-        });
-
+        ...item.data()
 
       });
 
 
-    }
-
-
-
-    return ordersData;
-
-
-
-  } catch(error) {
-
-
-    console.error(
-
-      "Error obteniendo pedidos por IDs:",
-
-      error
-
-    );
-
-
-    throw error;
+    });
 
 
   }
+
+
+
+
+  return result;
+
+
+
+ }catch(error){
+
+
+  console.error(
+
+    "Error buscando pedidos:",
+
+    error
+
+  );
+
+
+  throw error;
+
+
+ }
 
 
 };

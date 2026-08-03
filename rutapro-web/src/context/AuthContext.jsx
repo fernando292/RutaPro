@@ -2,187 +2,116 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from "react";
 
-import {
-  onAuthStateChanged
-} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
-import {
-  auth
-} from "../config/firebase";
+import { auth } from "../config/firebase";
 
-import {
-  getUserProfile
-} from "../services/user/userService";
-
-import {
-  getCompanyById
-} from "../services/companies/companyService";
-
+import { getUserProfile } from "../services/user/userService";
+import { getCompanyById } from "../services/companies/companyService";
 
 const AuthContext = createContext();
 
-
 export function AuthProvider({ children }) {
 
-
   const [user, setUser] = useState(null);
-
   const [profile, setProfile] = useState(null);
-
   const [company, setCompany] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
-
 
   useEffect(() => {
 
-
     const unsubscribe = onAuthStateChanged(
-
       auth,
-
-      async(currentUser)=>{
-
+      async (currentUser) => {
 
         try {
 
-
           setLoading(true);
 
-
-
-          if(currentUser){
-
-
-            console.log(
-              "AUTH USER:",
-              currentUser
-            );
-
-
-
-            const userData = await getUserProfile(
-
-              currentUser.uid
-
-            );
-
-
-
-            console.log(
-              "PROFILE ENCONTRADO:",
-              userData
-            );
-
-
-
-            setUser(currentUser);
-
-            setProfile(userData);
-
-
-
-            if(userData?.companyId){
-
-
-              const companyData = await getCompanyById(
-
-                userData.companyId
-
-              );
-
-
-              console.log(
-                "DATOS FIRESTORE EMPRESA:",
-                companyData
-              );
-
-
-              setCompany(companyData);
-
-
-            }else{
-
-
-              setCompany(null);
-
-
-            }
-
-
-
-          }else{
-
+          if (!currentUser) {
 
             setUser(null);
-
             setProfile(null);
-
             setCompany(null);
 
+            return;
 
           }
 
+          const userData = await getUserProfile(
+            currentUser.uid
+          );
 
+          setUser(currentUser);
+          setProfile(userData);
 
-        }catch(error){
+          if (userData?.companyId) {
 
+            const companyData = await getCompanyById(
+              userData.companyId
+            );
+
+            setCompany(companyData);
+
+          } else {
+
+            setCompany(null);
+
+          }
+
+        } catch (error) {
 
           console.error(
             "Error cargando autenticación:",
             error
           );
 
-
           setUser(null);
-
           setProfile(null);
-
           setCompany(null);
 
-
-        }finally{
-
+        } finally {
 
           setLoading(false);
 
-
         }
 
-
       }
-
     );
 
+    return unsubscribe;
 
-    return ()=>unsubscribe();
+  }, []);
 
+  const value = useMemo(() => ({
 
-  },[]);
+    user,
 
+    profile,
 
+    company,
+
+    loading
+
+  }), [
+
+    user,
+
+    profile,
+
+    company,
+
+    loading
+
+  ]);
 
   return (
 
-    <AuthContext.Provider
-
-      value={{
-
-        user,
-
-        profile,
-
-        company,
-
-        loading
-
-      }}
-
-    >
+    <AuthContext.Provider value={value}>
 
       {children}
 
@@ -190,12 +119,9 @@ export function AuthProvider({ children }) {
 
   );
 
-
 }
 
-
-
-export function useAuth(){
+export function useAuth() {
 
   return useContext(AuthContext);
 

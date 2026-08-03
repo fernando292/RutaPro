@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+
 import { getClients } from "../../services/clients/clientService";
 import { getProducts } from "../../services/products/productService";
 import { addOrder, updateOrder } from "../../services/orders/orderService";
 import { useAuth } from "../../context/AuthContext";
 import { validateStock } from "../../services/inventory/stockValidator";
 import { discountStock, increaseStock } from "../../services/inventory/inventoryMovementService";
+
 import "./OrderForm.css";
 
 function OrderForm({ order, onSuccess }) {
@@ -14,96 +16,105 @@ function OrderForm({ order, onSuccess }) {
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
 
-  const initialForm = {
-    clientId: "",
-    clientName: "",
-    address: "",
-    status: "Pendiente",
-    items: []
-  };
+  const initialForm = useMemo(
+    () => ({
+      clientId: "",
+      clientName: "",
+      address: "",
+      status: "Pendiente",
+      items: []
+    }),
+    []
+  );
 
   const [form, setForm] = useState(initialForm);
 
-  useEffect(() => {
-    if (profile?.companyId) {
-      loadData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.companyId]);
-
-  useEffect(() => {
-    if (order) {
-      setForm({
-        clientId: order.clientId || "",
-        clientName: order.clientName || "",
-        address: order.address || "",
-        status: order.status || "Pendiente",
-        items:
-          order.items?.map((item) => ({
-            rowId: Date.now() + Math.random(),
-            productId: item.productId,
-            productName: item.productName,
-            price: Number(item.price) || 0,
-            quantity: Number(item.quantity) || 1,
-            subtotal: Number(item.subtotal) || (Number(item.price || 0) * Number(item.quantity || 1))
-          })) || []
-      });
-    } else {
-      // If no order, reset to initial form (optional)
-      setForm(initialForm);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order]);
-
-  const loadData = async () => {
+  // helper id generator with fallback
+  const genId = useCallback(() => {
     try {
-      const clientsData = await getClients(profile.companyId);
-      const productsData = await getProducts(profile.companyId);
+      // prefer crypto.randomUUID if available
+      // eslint-disable-next-line no-undef
+      return typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2, 9);
+    } catch {
+      return Math.random().toString(36).slice(2, 9);
+    }
+  }, []);
+
+  const loadData = useCallback(async () => {
+    if (!profile?.companyId) return;
+
+    try {
+      const [clientsData, productsData] = await Promise.all([
+        getClients(profile.companyId),
+        getProducts(profile.companyId)
+      ]);
       setClients(clientsData || []);
       setProducts(productsData || []);
     } catch (error) {
       console.error("Error cargando datos:", error);
     }
-  };
+  }, [profile?.companyId]);
 
-  const handleClientChange = (e) => {
-    const value = e.target.value;
-    if (!value) {
-      // Clear client selection
-      setForm((prev) => ({
-        ...prev,
-        clientId: "",
-        clientName: "",
-        address: ""
-      }));
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // populate form when editing an order
+  useEffect(() => {
+    if (!order) {
+      setForm(initialForm);
       return;
     }
 
-    const client = clients.find((item) => String(item.id) === String(value));
-    if (!client) return;
+    setForm({
+      clientId: order.clientId || "",
+      clientName: order.clientName || "",
+      address: order.address || "",
+      status: order.status || "Pendiente",
+      items:
+        order.items?.map((item) => ({
+          rowId: genId(),
+          productId: item.productId,
+          productName: item.productName,
+          price: Number(item.price) || 0,
+          quantity: Number(item.quantity) || 0,
+          subtotal: Number(item.subtotal) || 0
+        })) || []
+    });
+  }, [order, initialForm, genId]);
 
-    setForm((prev) => ({
-      ...prev,
-      clientId: client.id,
-      clientName: client.name,
-      address: client.address || ""
-    }));
-  };
+  const handleClientChange = useCallback(
+    (e) => {
+      const clientId = e.target.value;
+      const client = clients.find((item) => String(item.id) === String(clientId));
+      if (!client) {
+        // If the selection is cleared
+        setForm((prev) => ({ ...prev, clientId: "", clientName: "", address: "" }));
+        return;
+      }
+      setForm((prev) => ({
+        ...prev,
+        clientId: client.id,
+        clientName: client.name,
+        address: client.address
+      }));
+    },
+    [clients]
+  );
 
-  const handleStatusChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      status: e.target.value
-    }));
-  };
+  const handleStatusChange = useCallback((e) => {
+    setForm((prev) => ({ ...prev, status: e.target.value }));
+  }, []);
 
-  const addProductRow = () => {
+  const addProductRow = useCallback(() => {
     setForm((prev) => ({
       ...prev,
       items: [
         ...prev.items,
         {
-          rowId: Date.now() + Math.random(),
+          rowId: genId(),
           productId: "",
           productName: "",
           price: 0,
@@ -112,72 +123,54 @@ function OrderForm({ order, onSuccess }) {
         }
       ]
     }));
-  };
+  }, [genId]);
 
-  const removeProductRow = (index) => {
+  const removeProductRow = useCallback((index) => {
     setForm((prev) => ({
       ...prev,
       items: prev.items.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const handleProductChange = (index, productId) => {
-    setForm((prev) => {
-      const items = [...prev.items];
-      // Ensure index exists
-      if (!items[index]) return prev;
+  const handleProductChange = useCallback(
+    (index, productId) => {
+      const product = products.find((item) => String(item.id) === String(productId));
+      if (!product) return;
 
-      if (!productId) {
-        // Clear product selection for this row
+      setForm((prev) => {
+        const items = [...prev.items];
+        const qty = Number(items[index]?.quantity) || 1;
+        const price = Number(product.price) || 0;
         items[index] = {
           ...items[index],
-          productId: "",
-          productName: "",
-          price: 0,
-          subtotal: 0
+          productId: product.id,
+          productName: product.name,
+          price,
+          subtotal: price * qty
         };
         return { ...prev, items };
-      }
+      });
+    },
+    [products]
+  );
 
-      const product = products.find((p) => String(p.id) === String(productId));
-      if (!product) return prev;
-
-      const price = Number(product.price) || 0;
-      const quantity = Number(items[index].quantity) || 1;
-
+  const handleQuantityChange = useCallback((index, value) => {
+    const quantity = Number(value) || 0;
+    setForm((prev) => {
+      const items = [...prev.items];
+      const price = Number(items[index]?.price) || 0;
       items[index] = {
         ...items[index],
-        productId: product.id,
-        productName: product.name,
-        price,
         quantity,
         subtotal: price * quantity
       };
-
       return { ...prev, items };
     });
-  };
+  }, []);
 
-  const handleQuantityChange = (index, quantityInput) => {
-    const parsed = parseInt(quantityInput, 10);
-    const value = Number.isNaN(parsed) ? 1 : Math.max(1, parsed);
-
-    setForm((prev) => {
-      const items = [...prev.items];
-      if (!items[index]) return prev;
-
-      const price = Number(items[index].price) || 0;
-      items[index] = {
-        ...items[index],
-        quantity: value,
-        subtotal: price * value
-      };
-
-      return { ...prev, items };
-    });
-  };
-
-  const total = form.items.reduce((acc, item) => acc + (Number(item.subtotal) || 0), 0);
+  const total = useMemo(() => {
+    return form.items.reduce((acc, item) => acc + Number(item.subtotal || 0), 0);
+  }, [form.items]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -188,28 +181,22 @@ function OrderForm({ order, onSuccess }) {
       return;
     }
 
-    if (!form.items || form.items.length === 0) {
-      alert("Agrega productos al pedido.");
+    if (form.items.length === 0) {
+      alert("Agrega al menos un producto.");
       return;
     }
 
     try {
       setLoading(true);
 
-      // If editing, revert previous inventory movements before validating new one
+      // If editing an existing order, revert previous stock first
       if (order?.items?.length) {
-        try {
-          await increaseStock(order.items, profile.companyId, "Reversión por edición de pedido");
-        } catch (err) {
-          console.error("Error revirtiendo inventario previo:", err);
-          // Continue — let validation handle remaining issues
-        }
+        await increaseStock(order.items, profile.companyId, "Reversión por edición");
       }
 
       const validation = await validateStock(form.items, profile.companyId);
       if (!validation.valid) {
-        alert(validation.message || "Stock insuficiente para los productos seleccionados.");
-        setLoading(false);
+        alert(validation.message);
         return;
       }
 
@@ -221,31 +208,30 @@ function OrderForm({ order, onSuccess }) {
         items: form.items.map((item) => ({
           productId: item.productId,
           productName: item.productName,
-          price: item.price,
-          quantity: item.quantity,
-          subtotal: item.subtotal
+          quantity: Number(item.quantity),
+          price: Number(item.price),
+          subtotal: Number(item.subtotal)
         })),
         total,
         inventoryProcessed: true
       };
 
-      if (order && order.id) {
+      if (order) {
         await updateOrder(order.id, orderData);
       } else {
-        await addOrder({ ...orderData, createdAt: new Date() }, profile.companyId);
+        await addOrder(orderData, profile.companyId);
       }
 
-      // Apply stock discount for the new order
+      // Discount the current form items from stock
       await discountStock(form.items, profile.companyId);
 
+      // reset form only when creating a new order (optional: keep for both)
       setForm(initialForm);
 
-      if (typeof onSuccess === "function") {
-        await onSuccess();
-      }
+      if (typeof onSuccess === "function") onSuccess();
     } catch (error) {
-      console.error("Error guardando pedido:", error);
-      alert("Error guardando pedido");
+      console.error(error);
+      alert(error?.message || "Error guardando pedido.");
     } finally {
       setLoading(false);
     }
@@ -256,7 +242,7 @@ function OrderForm({ order, onSuccess }) {
       <h2>{order ? "Editar Pedido" : "Nuevo Pedido"}</h2>
 
       <label>Cliente</label>
-      <select value={form.clientId ?? ""} onChange={handleClientChange} required>
+      <select value={form.clientId} onChange={handleClientChange} required>
         <option value="">Seleccione un cliente</option>
         {clients.map((client) => (
           <option key={client.id} value={client.id}>
@@ -266,25 +252,24 @@ function OrderForm({ order, onSuccess }) {
       </select>
 
       <label>Dirección</label>
-      <input value={form.address ?? ""} readOnly />
+      <input value={form.address} readOnly />
 
       <label>Estado</label>
-      <select value={form.status ?? "Pendiente"} onChange={handleStatusChange}>
-        <option value="Pendiente">Pendiente</option>
-        <option value="Preparando">Preparando</option>
-        <option value="En ruta">En ruta</option>
-        <option value="Entregado">Entregado</option>
-        <option value="Cancelado">Cancelado</option>
+      <select value={form.status} onChange={handleStatusChange}>
+        <option>Pendiente</option>
+        <option>Preparando</option>
+        <option>En ruta</option>
+        <option>Entregado</option>
+        <option>Cancelado</option>
       </select>
 
       <hr />
-
       <h3>Productos</h3>
 
       {form.items.map((item, index) => (
         <div key={item.rowId} className="order-product-row">
           <select
-            value={item.productId ?? ""}
+            value={item.productId}
             onChange={(e) => handleProductChange(index, e.target.value)}
           >
             <option value="">Producto</option>
@@ -298,12 +283,11 @@ function OrderForm({ order, onSuccess }) {
           <input
             type="number"
             min="1"
-            value={item.quantity ?? 1}
+            value={item.quantity}
             onChange={(e) => handleQuantityChange(index, e.target.value)}
           />
 
           <input readOnly value={`$${Number(item.price || 0).toLocaleString("es-CO")}`} />
-
           <input readOnly value={`$${Number(item.subtotal || 0).toLocaleString("es-CO")}`} />
 
           <button type="button" onClick={() => removeProductRow(index)}>
@@ -317,7 +301,6 @@ function OrderForm({ order, onSuccess }) {
       </button>
 
       <hr />
-
       <h3>
         Total: $ {total.toLocaleString("es-CO")}
       </h3>

@@ -26,9 +26,9 @@ import "./Products.css";
 
 function Products() {
 
+
   const { profile } = useAuth();
 
-  console.log("EMPRESA PRODUCTOS:", profile);
 
   const [products, setProducts] = useState([]);
 
@@ -40,30 +40,56 @@ function Products() {
 
 
 
+
+  console.log(
+    "EMPRESA PRODUCTOS:",
+    profile
+  );
+
+
+
+
   useEffect(() => {
 
-   if (profile?.companyId) {
-    loadProducts();
+
+    if(profile?.companyId){
+
+      loadProducts();
 
     }
 
-  }, [profile?.companyId]);
+
+  },[profile?.companyId]);
 
 
 
 
-  const loadProducts = async () => {
 
-    try {
+
+
+  const loadProducts = async()=>{
+
+
+    try{
+
 
       const data = await getProducts(
         profile.companyId
       );
 
-      setProducts(data);
+
+      console.log(
+        "PRODUCTOS RECIBIDOS:",
+        data
+      );
 
 
-    } catch (error) {
+      setProducts(data || []);
+
+
+
+    }catch(error){
+
 
       console.error(
         "Error cargando productos:",
@@ -71,11 +97,14 @@ function Products() {
       );
 
 
-    } finally {
+    }finally{
+
 
       setLoading(false);
 
+
     }
+
 
   };
 
@@ -83,14 +112,13 @@ function Products() {
 
 
 
-  const handleProductSuccess = async () => {
+
+  const handleProductSuccess = async()=>{
 
 
     setOpenModal(false);
 
-
     setSelectedProduct(null);
-
 
     await loadProducts();
 
@@ -101,19 +129,22 @@ function Products() {
 
 
 
-  const handleDelete = async (id) => {
 
 
-    const confirm = window.confirm(
+  const handleDelete = async(id)=>{
+
+
+    const confirmDelete = window.confirm(
       "¿Seguro que deseas eliminar este producto?"
     );
 
 
-    if (!confirm) return;
+    if(!confirmDelete) return;
 
 
 
-    try {
+    try{
+
 
       await deleteProduct(id);
 
@@ -122,12 +153,14 @@ function Products() {
 
 
 
-    } catch (error) {
+    }catch(error){
+
 
       console.error(
         "Error eliminando producto:",
         error
       );
+
 
     }
 
@@ -139,38 +172,56 @@ function Products() {
 
 
 
+
+
   const columns = [
 
 
     {
-      key: "name",
-      label: "Producto"
+      key:"name",
+      label:"Producto"
     },
 
 
     {
-      key: "category",
-      label: "Categoría"
+      key:"category",
+      label:"Categoría"
     },
 
 
     {
-      key: "price",
-      label: "Precio",
+      key:"price",
+      label:"Precio",
 
-      render: (value) =>
+      render:(value)=>
+
         `$${Number(value).toLocaleString("es-CO")}`
 
     },
 
 
     {
-      key: "stock",
-      label: "Stock"
+      key:"stock",
+      label:"Stock"
     }
 
 
   ];
+
+
+
+
+
+
+  console.log(
+    "ANTES DE RENDER PRODUCTS:",
+    {
+      products,
+      loading,
+      cantidad: products.length
+    }
+  );
+
 
 
 
@@ -222,7 +273,7 @@ function Products() {
 
               className="add-product-button"
 
-              onClick={() => {
+              onClick={()=>{
 
                 setSelectedProduct(null);
 
@@ -246,15 +297,15 @@ function Products() {
 
 
 
+
+
           {
 
             loading ? (
 
-
               <p>
                 Cargando productos...
               </p>
-
 
 
             ) : (
@@ -267,21 +318,23 @@ function Products() {
                 data={products}
 
 
+                actions={(product)=>(
 
-                actions={(product) => (
 
                   <>
 
 
                     <ButtonIcon
 
-                      icon={<Pencil size={18} />}
+                      icon={
+                        <Pencil size={18}/>
+                      }
 
                       type="edit"
 
                       title="Editar"
 
-                      onClick={() => {
+                      onClick={()=>{
 
                         setSelectedProduct(product);
 
@@ -297,17 +350,19 @@ function Products() {
 
                     <ButtonIcon
 
-                      icon={<Trash2 size={18} />}
+                      icon={
+                        <Trash2 size={18}/>
+                      }
 
                       type="delete"
 
                       title="Eliminar"
 
-                      onClick={() =>
+                      onClick={()=>{
 
-                        handleDelete(product.id)
+                        handleDelete(product.id);
 
-                      }
+                      }}
 
                     />
 
@@ -342,11 +397,13 @@ function Products() {
 
 
 
+
+
       <Modal
 
         isOpen={openModal}
 
-        onClose={() => {
+        onClose={()=>{
 
           setOpenModal(false);
 

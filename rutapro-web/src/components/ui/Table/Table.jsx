@@ -1,371 +1,135 @@
 import "./Table.css";
 
-
 function formatValue(value) {
 
-
-  // Estados visuales de pedidos
-
   const statusStyles = {
-
     Pendiente: "status pendiente",
-
     Preparando: "status preparando",
-
     "En ruta": "status ruta",
-
     Entregado: "status entregado",
-
     Cancelado: "status cancelado"
-
   };
 
-
-
   if (statusStyles[value]) {
-
     return (
-
       <span className={statusStyles[value]}>
-
         {value}
-
       </span>
-
     );
-
   }
 
-
-
-
-  // Firebase Timestamp
-
   if (
-
     value &&
-
     typeof value === "object" &&
-
     value.seconds
-
   ) {
-
     return new Date(
-
       value.seconds * 1000
-
     ).toLocaleDateString("es-CO");
-
   }
 
-
-
-
-  // Valores vacíos
-
   if (
-
     value === null ||
-
     value === undefined ||
-
     value === ""
-
   ) {
-
     return "-";
-
   }
 
-
-
-
-  // Números
-
-  if (
-
-    typeof value === "number"
-
-  ) {
-
-    return value.toLocaleString(
-
-      "es-CO"
-
-    );
-
+  if (typeof value === "number") {
+    return value.toLocaleString("es-CO");
   }
 
-
-
-
-  // Objetos
-
-  if (
-
-    typeof value === "object"
-
-  ) {
-
+  if (typeof value === "object") {
     return JSON.stringify(value);
-
   }
-
-
-
 
   return value;
-
 }
 
-
-
-
-
 function Table({
-
   columns,
-
   data,
-
   actions
-
 }) {
 
-
-
   return (
-
-
     <div className="table-container">
-
-
 
       <table className="table">
 
-
-
         <thead>
-
-
           <tr>
 
+            {columns.map((column) => (
+              <th key={column.key}>
+                {column.label}
+              </th>
+            ))}
 
-
-            {
-
-              columns.map((column) => (
-
-
-                <th
-
-                  key={column.key}
-
-                >
-
-                  {column.label}
-
-
-                </th>
-
-
-              ))
-
-            }
-
-
-
-
-            {
-
-              actions && (
-
-
-                <th>
-
-                  Acciones
-
-                </th>
-
-
-              )
-
-            }
-
-
+            {actions && (
+              <th>Acciones</th>
+            )}
 
           </tr>
-
-
         </thead>
-
-
-
-
 
         <tbody>
 
+          {data.length === 0 ? (
 
+            <tr>
+              <td
+                colSpan={
+                  columns.length +
+                  (actions ? 1 : 0)
+                }
+              >
+                No hay datos disponibles
+              </td>
+            </tr>
 
-          {
+          ) : (
 
+            data.map((row) => (
 
-            data.length === 0 ? (
+              <tr key={row.id}>
 
+                {columns.map((column) => (
 
-              <tr>
+                  <td key={column.key}>
 
+                    {column.render
+                      ? column.render(
+                          row[column.key],
+                          row
+                        )
+                      : formatValue(
+                          row[column.key]
+                        )}
 
-                <td
+                  </td>
 
-                  colSpan={
+                ))}
 
-                    columns.length +
-
-                    (actions ? 1 : 0)
-
-                  }
-
-                >
-
-                  No hay datos disponibles
-
-
-                </td>
-
+                {actions && (
+                  <td>
+                    {actions(row)}
+                  </td>
+                )}
 
               </tr>
 
+            ))
 
-
-            ) : (
-
-
-
-              data.map((row) => {
-
-               console.log("DATOS TABLA:", row);
-
-               return (
-
-                <tr
-
-                  key={row.id}
-
-                >
-
-
-
-                  {
-
-
-                    columns.map((column) => (
-
-
-
-                      <td
-
-                        key={column.key}
-
-                      >
-
-
-
-                        {
-
-                           column.render
-                          ? column.render(row[column.key], row)
-                          :
-
-                          formatValue(
-
-                            row[column.key]
-
-                          )
-
-                        }
-
-
-
-                      </td>
-
-
-
-                    ))
-
-
-
-                  }
-
-
-
-
-
-                  {
-
-
-                    actions && (
-
-
-
-                      <td>
-
-
-
-                        {
-
-                          actions(row)
-
-                        }
-
-
-
-                      </td>
-
-
-
-                    )
-
-
-                  }
-
-
-
-
-                </tr>
-
-
-
-              );
-
-
-              })
-
-            )
-
-
-
-          }
-
-
+          )}
 
         </tbody>
 
-
-
-
       </table>
 
-
-
     </div>
-
-
   );
-
 }
-
-
 
 export default Table;

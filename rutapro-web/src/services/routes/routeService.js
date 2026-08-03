@@ -6,7 +6,8 @@ import {
   deleteDoc,
   doc,
   query,
-  where
+  where,
+  serverTimestamp
 } from "firebase/firestore";
 
 import { db } from "../../config/firebase";
@@ -16,27 +17,47 @@ const routesCollection = collection(
   "routes"
 );
 
+// ===================================
+// CACHE
+// ===================================
 
+const cache = new Map();
 
-// Obtener rutas
+export const clearRoutesCache = (companyId) => {
 
-export const getRoutes = async (companyId) => {
+  cache.delete(companyId);
+
+};
+
+// ===================================
+// OBTENER RUTAS
+// ===================================
+
+export const getRoutes = async (
+  companyId,
+  forceRefresh = false
+) => {
+
+  if (!companyId) return [];
+
+  if (!forceRefresh && cache.has(companyId)) {
+
+    return cache.get(companyId);
+
+  }
 
   const q = query(
-
     routesCollection,
-
     where(
       "companyId",
       "==",
       companyId
     )
-
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((item) => ({
+  const routes = snapshot.docs.map((item) => ({
 
     id: item.id,
 
@@ -44,93 +65,94 @@ export const getRoutes = async (companyId) => {
 
   }));
 
+  cache.set(
+    companyId,
+    routes
+  );
+
+  return routes;
+
 };
 
-
-
-
-// Crear ruta
+// ===================================
+// CREAR RUTA
+// ===================================
 
 export const addRoute = async (
-
   route,
-
   companyId
-
 ) => {
 
-  return await addDoc(
-
+  const response = await addDoc(
     routesCollection,
-
     {
 
       ...route,
 
       companyId,
 
-      createdAt: new Date()
+      createdAt: serverTimestamp()
 
     }
-
   );
+
+  clearRoutesCache(companyId);
+
+  return response;
 
 };
 
-
-
-
-// Actualizar ruta
+// ===================================
+// ACTUALIZAR RUTA
+// ===================================
 
 export const updateRoute = async (
-
   id,
-
   route
-
 ) => {
 
   const routeRef = doc(
-
     db,
-
     "routes",
-
     id
-
   );
 
-  return await updateDoc(
-
+  await updateDoc(
     routeRef,
+    {
 
-    route
+      ...route,
 
+      updatedAt: serverTimestamp()
+
+    }
   );
+
+  clearRoutesCache(route.companyId);
 
 };
 
+// ===================================
+// ELIMINAR RUTA
+// ===================================
 
-
-
-// Eliminar ruta
-
-export const deleteRoute = async (id) => {
+export const deleteRoute = async (
+  id,
+  companyId
+) => {
 
   const routeRef = doc(
-
     db,
-
     "routes",
-
     id
-
   );
 
-  return await deleteDoc(
+  await deleteDoc(routeRef);
 
-    routeRef
+  if (companyId) {
 
-  );
+    clearRoutesCache(companyId);
+
+  }
 
 };

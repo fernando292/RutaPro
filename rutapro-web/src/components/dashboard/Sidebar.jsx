@@ -1,86 +1,68 @@
+import { memo, useMemo, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
-
 import { logout } from "../../services/auth/authService";
 
 import "./Sidebar.css";
 
-
-function Sidebar(){
-
+function Sidebar() {
 
   const navigate = useNavigate();
 
-
   const { profile, company } = useAuth();
 
+  const role = profile?.role;
 
+  const handleLogout = useCallback(async () => {
 
-  const handleLogout = async()=>{
-
-
-    try{
-
+    try {
 
       await logout();
 
       navigate("/login");
 
-
-    }catch(error){
-
+    } catch (error) {
 
       console.error(
         "Error cerrando sesión:",
         error
       );
 
-
     }
 
+  }, [navigate]);
 
-  };
-
-
-
-
-  const role = profile?.role;
-
-
-
-  const brandName =
+  const brandName = useMemo(() => (
 
     company?.branding?.commercialName ||
 
     company?.name ||
 
-    "RutaPro";
+    "RutaPro"
 
+  ), [company]);
 
+  const logo = useMemo(() => (
 
-  const logo =
+    company?.branding?.logo || ""
 
-    company?.branding?.logo || "";
+  ), [company]);
 
-
-
-  const color =
+  const color = useMemo(() => (
 
     company?.branding?.primaryColor ||
 
-    "#2563eb";
+    "#2563eb"
 
+  ), [company]);
 
-
-
-  const menuItems=[
-
+  const menuItems = useMemo(() => [
 
     {
-      path:"/dashboard",
-      label:"📊 Dashboard",
-      roles:[
+      path: "/dashboard",
+      label: "📊 Dashboard",
+      roles: [
         "Administrador",
         "Vendedor",
         "Bodega",
@@ -88,162 +70,135 @@ function Sidebar(){
       ]
     },
 
-
     {
-      path:"/clients",
-      label:"👥 Clientes",
-      roles:[
+      path: "/clients",
+      label: "👥 Clientes",
+      roles: [
         "Administrador",
         "Vendedor"
       ]
     },
 
-
     {
-      path:"/orders",
-      label:"📦 Pedidos",
-      roles:[
+      path: "/orders",
+      label: "📦 Pedidos",
+      roles: [
         "Administrador",
         "Vendedor"
       ]
     },
 
-
     {
-      path:"/products",
-      label:"📋 Productos",
-      roles:[
+      path: "/products",
+      label: "📋 Productos",
+      roles: [
         "Administrador",
         "Bodega"
       ]
     },
 
-
     {
-      path:"/inventory",
-      label:"📦 Inventario",
-      roles:[
+      path: "/inventory",
+      label: "📦 Inventario",
+      roles: [
         "Administrador",
         "Bodega"
       ]
     },
 
-
     {
-      path:"/drivers",
-      label:"🚚 Conductores",
-      roles:[
+      path: "/drivers",
+      label: "🚚 Conductores",
+      roles: [
         "Administrador"
       ]
     },
 
-
     {
-      path:"/vehicles",
-      label:"🚛 Vehículos",
-      roles:[
+      path: "/vehicles",
+      label: "🚛 Vehículos",
+      roles: [
         "Administrador"
       ]
     },
 
-
     {
-      path:"/routes",
-      label:"🗺️ Rutas",
-      roles:[
+      path: "/routes",
+      label: "🗺️ Rutas",
+      roles: [
         "Administrador",
         "Conductor"
       ]
     },
 
-
     {
-      path:"/map",
-      label:"🗺️ Mapa logístico",
-      roles:[
+      path: "/map",
+      label: "🗺️ Mapa logístico",
+      roles: [
         "Administrador",
         "Conductor"
       ]
     },
 
-
     {
-      path:"/reports",
-      label:"📈 Reportes",
-      roles:[
+      path: "/reports",
+      label: "📈 Reportes",
+      roles: [
         "Administrador"
       ]
     },
 
-
     {
-      path:"/settings",
-      label:"⚙️ Configuración",
-      roles:[
+      path: "/settings",
+      label: "⚙️ Configuración",
+      roles: [
         "Administrador"
       ]
     },
 
-
     {
-      path:"/admin",
-      label:"👤 Usuarios",
-      roles:[
+      path: "/admin",
+      label: "👤 Usuarios",
+      roles: [
         "Administrador"
       ]
     }
 
+  ], []);
 
-  ];
+  const visibleMenu = useMemo(() => (
 
+    menuItems.filter(item =>
+      item.roles.includes(role)
+    )
 
-
-
+  ), [menuItems, role]);
 
   return (
 
-
     <aside
-
       className="sidebar"
-
       style={{
-
-        "--primary-color":color
-
+        "--primary-color": color
       }}
-
     >
 
-
-
       <div className="sidebar-logo">
-
 
         {
 
           logo ? (
 
-
             <img
-
               src={logo}
-
               alt={brandName}
-
               className="company-logo"
-
-              onError={(e)=>{
-
-                e.target.style.display="none";
-
+              onError={(e) => {
+                e.target.style.display = "none";
               }}
-
             />
 
-
-          ):(
-
+          ) : (
 
             <div className="company-letter">
 
@@ -251,12 +206,9 @@ function Sidebar(){
 
             </div>
 
-
           )
 
         }
-
-
 
         <h2>
 
@@ -264,88 +216,45 @@ function Sidebar(){
 
         </h2>
 
-
-
       </div>
-
-
-
-
-
 
       <nav className="sidebar-menu">
 
-
         {
 
-          menuItems
-
-          .filter(item =>
-
-            item.roles.includes(role)
-
-          )
-
-          .map(item=>(
-
+          visibleMenu.map(item => (
 
             <NavLink
-
               key={item.path}
-
               to={item.path}
-
-              className={({isActive})=>
-
+              className={({ isActive }) =>
                 isActive ? "active" : ""
-
               }
-
             >
 
               {item.label}
 
-
             </NavLink>
-
 
           ))
 
-
         }
-
 
       </nav>
 
-
-
-
-
-
-
       <button
-
         className="logout-button"
-
         onClick={handleLogout}
-
       >
 
         Cerrar sesión
 
-
       </button>
-
-
-
 
     </aside>
 
-
   );
-
 
 }
 
-
-export default Sidebar;
+export default memo(Sidebar);

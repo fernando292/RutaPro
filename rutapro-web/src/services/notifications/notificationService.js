@@ -4,49 +4,47 @@ import { getRoutes } from "../routes/routeService";
 import { getDrivers } from "../drivers/driverService";
 import { getVehicles } from "../vehicles/vehicleService";
 
-export const getNotifications = async (companyId) => {
+const MAX_NOTIFICATIONS = 10;
 
-  const notifications = [];
+
+export const getNotifications = async (companyId)=>{
+
+  const notifications=[];
+
 
   const [
-
     orders,
-
     products,
-
     routes,
-
     drivers,
-
     vehicles
-
   ] = await Promise.all([
 
     getOrders(companyId),
-
     getProducts(companyId),
-
     getRoutes(companyId),
-
     getDrivers(companyId),
-
     getVehicles(companyId)
 
   ]);
 
-  // STOCK BAJO
 
-  products.forEach((product) => {
 
-    if (Number(product.stock || 0) <= 10) {
+  products.forEach((product)=>{
+
+    if(
+      notifications.length < MAX_NOTIFICATIONS &&
+      Number(product.stock || 0) <= 10
+    ){
 
       notifications.push({
 
-        type: "warning",
+        type:"warning",
 
-        title: "Stock bajo",
+        title:"Stock bajo",
 
-        message: `${product.name} tiene ${product.stock} unidades.`
+        message:
+        `${product.name} tiene ${product.stock} unidades.`
 
       });
 
@@ -54,19 +52,23 @@ export const getNotifications = async (companyId) => {
 
   });
 
-  // PEDIDOS PENDIENTES
 
-  orders.forEach((order) => {
 
-    if (order.status === "Pendiente") {
+  orders.forEach((order)=>{
+
+    if(
+      notifications.length < MAX_NOTIFICATIONS &&
+      order.status === "Pendiente"
+    ){
 
       notifications.push({
 
-        type: "info",
+        type:"info",
 
-        title: "Pedido pendiente",
+        title:"Pedido pendiente",
 
-        message: `Pedido #${order.orderNumber} está pendiente.`
+        message:
+        `Pedido #${order.orderNumber} está pendiente.`
 
       });
 
@@ -74,19 +76,23 @@ export const getNotifications = async (companyId) => {
 
   });
 
-  // RUTAS SIN CONDUCTOR
 
-  routes.forEach((route) => {
 
-    if (!route.driverId) {
+  routes.forEach((route)=>{
+
+    if(
+      notifications.length < MAX_NOTIFICATIONS &&
+      !route.driverId
+    ){
 
       notifications.push({
 
-        type: "warning",
+        type:"warning",
 
-        title: "Ruta sin conductor",
+        title:"Ruta sin conductor",
 
-        message: `${route.routeNumber} aún no tiene conductor.`
+        message:
+        `${route.routeNumber} aún no tiene conductor.`
 
       });
 
@@ -94,19 +100,23 @@ export const getNotifications = async (companyId) => {
 
   });
 
-  // VEHÍCULOS INACTIVOS
 
-  vehicles.forEach((vehicle) => {
 
-    if (vehicle.status === "Inactivo") {
+  vehicles.forEach((vehicle)=>{
+
+    if(
+      notifications.length < MAX_NOTIFICATIONS &&
+      vehicle.status === "Inactivo"
+    ){
 
       notifications.push({
 
-        type: "info",
+        type:"info",
 
-        title: "Vehículo inactivo",
+        title:"Vehículo inactivo",
 
-        message: `${vehicle.plate} está inactivo.`
+        message:
+        `${vehicle.plate} está inactivo.`
 
       });
 
@@ -114,25 +124,31 @@ export const getNotifications = async (companyId) => {
 
   });
 
-  // CONDUCTORES INACTIVOS
 
-  drivers.forEach((driver) => {
 
-    if (driver.status === "Inactivo") {
+  drivers.forEach((driver)=>{
+
+    if(
+      notifications.length < MAX_NOTIFICATIONS &&
+      driver.status === "Inactivo"
+    ){
 
       notifications.push({
 
-        type: "info",
+        type:"info",
 
-        title: "Conductor inactivo",
+        title:"Conductor inactivo",
 
-        message: `${driver.name} está inactivo.`
+        message:
+        `${driver.name} está inactivo.`
 
       });
 
     }
 
   });
+
+
 
   return notifications;
 

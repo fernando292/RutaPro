@@ -15,24 +15,47 @@ const driversCollection = collection(
   "drivers"
 );
 
-// Obtener conductores de la empresa
-export const getDrivers = async (companyId) => {
+// ===============================
+// CACHE
+// ===============================
+
+const cache = new Map();
+
+export const clearDriversCache = (companyId) => {
+
+  cache.delete(companyId);
+
+};
+
+// ===============================
+// OBTENER CONDUCTORES
+// ===============================
+
+export const getDrivers = async (
+  companyId,
+  forceRefresh = false
+) => {
+
+  if (!companyId) return [];
+
+  if (!forceRefresh && cache.has(companyId)) {
+
+    return cache.get(companyId);
+
+  }
 
   const q = query(
-
     driversCollection,
-
     where(
       "companyId",
       "==",
       companyId
     )
-
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((item) => ({
+  const drivers = snapshot.docs.map((item) => ({
 
     id: item.id,
 
@@ -40,78 +63,61 @@ export const getDrivers = async (companyId) => {
 
   }));
 
+  cache.set(
+    companyId,
+    drivers
+  );
+
+  return drivers;
+
 };
 
-// Crear conductor
+// ===============================
+// CREAR CONDUCTOR
+// ===============================
+
 export const addDriver = async (
-
   driver,
-
   companyId
-
 ) => {
 
-  try {
+  const response = await addDoc(
+    driversCollection,
+    {
 
-    const response = await addDoc(
+      ...driver,
 
-      driversCollection,
+      companyId
 
-      {
+    }
+  );
 
-        ...driver,
+  clearDriversCache(companyId);
 
-        companyId
-
-      }
-
-    );
-
-    console.log(
-      "Conductor creado:",
-      response.id
-    );
-
-    return response;
-
-  } catch (error) {
-
-    console.error(
-      "Error creando conductor:",
-      error
-    );
-
-    throw error;
-
-  }
+  return response;
 
 };
 
-// Actualizar conductor
+// ===============================
+// ACTUALIZAR CONDUCTOR
+// ===============================
+
 export const updateDriver = async (
-
   id,
-
   driver
-
 ) => {
 
   const driverRef = doc(
-
     db,
-
     "drivers",
-
     id
-
   );
 
-  return await updateDoc(
-
+  await updateDoc(
     driverRef,
-
     driver
-
   );
+
+  clearDriversCache(driver.companyId);
 
 };

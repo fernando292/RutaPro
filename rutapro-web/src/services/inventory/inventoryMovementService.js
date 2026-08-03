@@ -7,44 +7,28 @@ import {
   getDoc
 } from "firebase/firestore";
 
-
 import { db } from "../../config/firebase";
 
-
+const productsCollection = "products";
 
 const movementsCollection = collection(
   db,
   "inventoryMovements"
 );
 
-
-
-
-
+// =========================
 // Obtener producto
+// =========================
 
-const getProduct = async (
-
-  productId
-
-) => {
-
+const getProduct = async (productId) => {
 
   const productRef = doc(
-
     db,
-
-    "products",
-
+    productsCollection,
     productId
-
   );
 
-
-
   const snapshot = await getDoc(productRef);
-
-
 
   if (!snapshot.exists()) {
 
@@ -54,8 +38,6 @@ const getProduct = async (
 
   }
 
-
-
   return {
 
     id: snapshot.id,
@@ -64,17 +46,11 @@ const getProduct = async (
 
   };
 
-
 };
 
-
-
-
-
-
-
-
+// =========================
 // Actualizar stock
+// =========================
 
 const updateStock = async (
 
@@ -84,18 +60,15 @@ const updateStock = async (
 
 ) => {
 
-
   const productRef = doc(
 
     db,
 
-    "products",
+    productsCollection,
 
     productId
 
   );
-
-
 
   await updateDoc(
 
@@ -103,24 +76,19 @@ const updateStock = async (
 
     {
 
-      stock:newStock
+      stock: newStock,
+
+      updatedAt: serverTimestamp()
 
     }
 
   );
 
-
 };
 
-
-
-
-
-
-
-
-
-// Crear movimiento
+// =========================
+// Registrar movimiento
+// =========================
 
 const registerMovement = async (
 
@@ -140,132 +108,93 @@ const registerMovement = async (
 
 ) => {
 
-
   await addDoc(
 
     movementsCollection,
 
     {
 
-
       companyId,
-
 
       productId: product.id,
 
-
       productName: product.name,
-
 
       type,
 
-
       quantity,
-
 
       previousStock,
 
-
       newStock,
-
 
       reason,
 
-
       createdAt: serverTimestamp()
-
 
     }
 
   );
 
-
 };
 
+// =========================
+// Procesar movimiento
+// =========================
 
-
-
-
-
-
-
-
-// Descontar stock por pedido
-
-export const discountStock = async (
+const processMovement = async (
 
   items,
 
-  companyId
+  companyId,
+
+  type,
+
+  reason
 
 ) => {
-
 
   if (!companyId) {
 
     throw new Error(
-      "No existe companyId"
+      "No existe companyId."
     );
 
   }
 
-
-
-
   for (const item of items) {
 
-
     const product = await getProduct(
-
       item.productId
-
     );
-
-
-
 
     const currentStock = Number(
-
       product.stock || 0
-
     );
-
-
-
 
     const quantity = Number(
-
       item.quantity || 0
-
     );
 
+    let newStock;
 
+    if (type === "SALIDA") {
 
+      if (currentStock < quantity) {
 
-    if (currentStock < quantity) {
+        throw new Error(
+          `Stock insuficiente para ${product.name}`
+        );
 
+      }
 
-      throw new Error(
+      newStock = currentStock - quantity;
 
-        `Stock insuficiente para ${product.name}`
+    } else {
 
-      );
-
+      newStock = currentStock + quantity;
 
     }
-
-
-
-
-
-    const newStock =
-
-      currentStock - quantity;
-
-
-
-
-
 
     await updateStock(
 
@@ -275,12 +204,6 @@ export const discountStock = async (
 
     );
 
-
-
-
-
-
-
     await registerMovement(
 
       companyId,
@@ -289,35 +212,49 @@ export const discountStock = async (
 
       quantity,
 
-      "SALIDA",
+      type,
 
       currentStock,
 
       newStock,
 
-      "Salida por pedido"
+      reason
 
     );
 
-
-
   }
-
-
 
 };
 
+// =========================
+// Salida por pedido
+// =========================
 
+export const discountStock = async (
 
+  items,
 
+  companyId
 
+) => {
 
+  await processMovement(
 
+    items,
 
+    companyId,
 
+    "SALIDA",
 
+    "Salida por pedido"
 
-// Aumentar stock
+  );
+
+};
+
+// =========================
+// Entrada de inventario
+// =========================
 
 export const increaseStock = async (
 
@@ -329,98 +266,16 @@ export const increaseStock = async (
 
 ) => {
 
+  await processMovement(
 
-  if (!companyId) {
+    items,
 
-    throw new Error(
-      "No existe companyId"
-    );
+    companyId,
 
-  }
+    "ENTRADA",
 
+    reason
 
-
-
-  for (const item of items) {
-
-
-
-    const product = await getProduct(
-
-      item.productId
-
-    );
-
-
-
-
-
-    const currentStock = Number(
-
-      product.stock || 0
-
-    );
-
-
-
-
-
-    const quantity = Number(
-
-      item.quantity || 0
-
-    );
-
-
-
-
-
-    const newStock =
-
-      currentStock + quantity;
-
-
-
-
-
-
-
-    await updateStock(
-
-      product.id,
-
-      newStock
-
-    );
-
-
-
-
-
-
-
-    await registerMovement(
-
-      companyId,
-
-      product,
-
-      quantity,
-
-      "ENTRADA",
-
-      currentStock,
-
-      newStock,
-
-      reason
-
-    );
-
-
-
-  }
-
-
+  );
 
 };

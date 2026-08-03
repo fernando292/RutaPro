@@ -12,7 +12,6 @@ import {
 
 import { db } from "../../config/firebase";
 
-
 const productsCollection = collection(
   db,
   "products"
@@ -23,208 +22,134 @@ const movementsCollection = collection(
   "inventoryMovements"
 );
 
+// ===============================
+// CACHE
+// ===============================
 
+const cache = new Map();
 
-// Obtener productos de la empresa
+export const clearProductsCache = (companyId) => {
+  cache.delete(companyId);
+};
 
-export const getProducts = async (companyId) => {
+// ===============================
+// OBTENER PRODUCTOS
+// ===============================
+
+export const getProducts = async (
+  companyId,
+  forceRefresh = false
+) => {
+
+  if (!companyId) return [];
+
+  if (!forceRefresh && cache.has(companyId)) {
+    return cache.get(companyId);
+  }
 
   const q = query(
-
     productsCollection,
-
     where(
       "companyId",
       "==",
       companyId
     )
-
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((item) => ({
-
+  const products = snapshot.docs.map((item) => ({
     id: item.id,
-
     ...item.data()
-
   }));
 
+  cache.set(companyId, products);
+
+  return products;
 };
 
-
-
-
-
-
-// Crear producto
+// ===============================
+// CREAR PRODUCTO
+// ===============================
 
 export const addProduct = async (
-
   product,
-
   companyId
-
 ) => {
 
-  try {
-
-    console.log("ENVIANDO PRODUCTO:", product);
-
-    const productRef = await addDoc(
-
-      productsCollection,
-
-      {
-
-        ...product,
-
-        companyId
-
-      }
-
-    );
-
-
-    // Registrar entrada inicial de inventario
-
-    if (Number(product.stock) > 0) {
-
-      console.log("CREANDO MOVIMIENTO ENTRADA:", {
-
-        product: product.name,
-
-        stock: product.stock,
-
-        companyId
-
-      });
-
-      try {
-
-        const movementRef = await addDoc(
-
-          movementsCollection,
-
-          {
-
-            companyId,
-
-            productId: productRef.id,
-
-            productName: product.name,
-
-            type: "ENTRADA",
-
-            quantity: Number(product.stock),
-
-            previousStock: 0,
-
-            newStock: Number(product.stock),
-
-            reason: "Stock inicial",
-
-            createdAt: serverTimestamp()
-
-          }
-
-        );
-
-        console.log(
-          "MOVIMIENTO CREADO:",
-          movementRef.id
-        );
-
-      } catch (error) {
-
-        console.error(
-          "ERROR CREANDO MOVIMIENTO:",
-          error
-        );
-
-      }
-
+  const productRef = await addDoc(
+    productsCollection,
+    {
+      ...product,
+      companyId
     }
+  );
 
-    console.log(
-      "Producto creado:",
-      productRef.id
+  if (Number(product.stock) > 0) {
+
+    await addDoc(
+      movementsCollection,
+      {
+        companyId,
+        productId: productRef.id,
+        productName: product.name,
+        type: "ENTRADA",
+        quantity: Number(product.stock),
+        previousStock: 0,
+        newStock: Number(product.stock),
+        reason: "Stock inicial",
+        createdAt: serverTimestamp()
+      }
     );
-
-    return productRef;
-
-  } catch (error) {
-
-    console.error(
-      "Error creando producto:",
-      error
-    );
-
-    throw error;
 
   }
 
+  clearProductsCache(companyId);
+
+  return productRef;
 };
 
-
-
-
-
-
-// Actualizar producto
+// ===============================
+// ACTUALIZAR PRODUCTO
+// ===============================
 
 export const updateProduct = async (
-
   id,
-
   product
-
 ) => {
 
   const productRef = doc(
-
     db,
-
     "products",
-
     id
-
   );
 
-  return updateDoc(
-
+  await updateDoc(
     productRef,
-
     product
-
   );
+
+  clearProductsCache(product.companyId);
 
 };
 
+// ===============================
+// ELIMINAR PRODUCTO
+// ===============================
 
-
-
-
-
-// Eliminar producto
-
-export const deleteProduct = async (id) => {
+export const deleteProduct = async (
+  id,
+  companyId
+) => {
 
   const productRef = doc(
-
     db,
-
     "products",
-
     id
-
   );
 
-  return deleteDoc(
+  await deleteDoc(productRef);
 
-    productRef
-
-  );
+  clearProductsCache(companyId);
 
 };

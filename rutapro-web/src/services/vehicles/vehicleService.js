@@ -15,27 +15,47 @@ const vehiclesCollection = collection(
   "vehicles"
 );
 
+// ===============================
+// CACHE
+// ===============================
 
+const cache = new Map();
 
-// Obtener vehículos
+export const clearVehiclesCache = (companyId) => {
 
-export const getVehicles = async (companyId) => {
+  cache.delete(companyId);
+
+};
+
+// ===============================
+// OBTENER VEHÍCULOS
+// ===============================
+
+export const getVehicles = async (
+  companyId,
+  forceRefresh = false
+) => {
+
+  if (!companyId) return [];
+
+  if (!forceRefresh && cache.has(companyId)) {
+
+    return cache.get(companyId);
+
+  }
 
   const q = query(
-
     vehiclesCollection,
-
     where(
       "companyId",
       "==",
       companyId
     )
-
   );
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map((item) => ({
+  const vehicles = snapshot.docs.map((item) => ({
 
     id: item.id,
 
@@ -43,84 +63,61 @@ export const getVehicles = async (companyId) => {
 
   }));
 
+  cache.set(
+    companyId,
+    vehicles
+  );
+
+  return vehicles;
+
 };
 
-
-
-
-// Crear vehículo
+// ===============================
+// CREAR VEHÍCULO
+// ===============================
 
 export const addVehicle = async (
-
   vehicle,
-
   companyId
-
 ) => {
 
-  try {
+  const response = await addDoc(
+    vehiclesCollection,
+    {
 
-    const response = await addDoc(
+      ...vehicle,
 
-      vehiclesCollection,
+      companyId
 
-      {
+    }
+  );
 
-        ...vehicle,
+  clearVehiclesCache(companyId);
 
-        companyId
-
-      }
-
-    );
-
-    return response;
-
-  } catch (error) {
-
-    console.error(
-
-      "Error creando vehículo:",
-
-      error
-
-    );
-
-    throw error;
-
-  }
+  return response;
 
 };
 
-
-
-
-// Actualizar vehículo
+// ===============================
+// ACTUALIZAR VEHÍCULO
+// ===============================
 
 export const updateVehicle = async (
-
   id,
-
   vehicle
-
 ) => {
 
   const vehicleRef = doc(
-
     db,
-
     "vehicles",
-
     id
-
   );
 
-  return await updateDoc(
-
+  await updateDoc(
     vehicleRef,
-
     vehicle
-
   );
+
+  clearVehiclesCache(vehicle.companyId);
 
 };

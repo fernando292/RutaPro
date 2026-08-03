@@ -1,29 +1,50 @@
-import { useEffect, useState } from "react";
-import { Trash2, Eye, Pencil } from "lucide-react";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback
+} from "react";
+
+
+import {
+  Trash2,
+  Eye,
+  Pencil
+} from "lucide-react";
+
 
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 
+
 import Table from "../../components/ui/Table/Table";
-import ButtonIcon from "../../components/ui/ButtonIcon/ButtonIcon";
 import Modal from "../../components/ui/Modal/Modal";
+import ButtonIcon from "../../components/ui/ButtonIcon/ButtonIcon";
+
 
 import ClientForm from "./ClientForm";
+
 
 import {
   getClients,
   deleteClient
 } from "../../services/clients/clientService";
 
-import { useAuth } from "../../context/AuthContext";
+
+import {
+  useAuth
+} from "../../context/AuthContext";
+
 
 import "./Clients.css";
+
 
 
 function Clients() {
 
 
   const { profile } = useAuth();
+
 
 
   const [clients, setClients] = useState([]);
@@ -39,32 +60,30 @@ function Clients() {
 
 
 
-  useEffect(() => {
-
-    if(profile?.companyId){
-
-      loadClients();
-
-    }
-
-  }, [profile?.companyId]);
 
 
 
+  const loadClients = useCallback(async () => {
 
 
-  const loadClients = async () => {
+    if (!profile?.companyId) return;
+
+
 
     try {
+
 
       const data = await getClients(
         profile.companyId
       );
 
-      setClients(data);
+
+      setClients(data || []);
 
 
-    } catch(error) {
+
+    } catch (error) {
+
 
       console.error(
         "Error cargando clientes:",
@@ -74,18 +93,37 @@ function Clients() {
 
     } finally {
 
+
       setLoading(false);
+
 
     }
 
-  };
+
+  }, [profile?.companyId]);
 
 
 
 
 
 
-  const handleSuccess = async () => {
+
+  useEffect(() => {
+
+
+    loadClients();
+
+
+  }, [loadClients]);
+
+
+
+
+
+
+
+
+  const handleSuccess = useCallback(async () => {
 
 
     setOpenModal(false);
@@ -98,7 +136,7 @@ function Clients() {
     await loadClients();
 
 
-  };
+  }, [loadClients]);
 
 
 
@@ -106,7 +144,9 @@ function Clients() {
 
 
 
-  const handleDelete = async (id) => {
+
+
+  const handleDelete = useCallback(async (id) => {
 
 
     const confirmDelete = window.confirm(
@@ -114,7 +154,7 @@ function Clients() {
     );
 
 
-    if(!confirmDelete) return;
+    if (!confirmDelete) return;
 
 
 
@@ -122,7 +162,6 @@ function Clients() {
 
 
       await deleteClient(id);
-
 
       await loadClients();
 
@@ -140,14 +179,18 @@ function Clients() {
     }
 
 
-  };
+  }, [loadClients]);
 
 
 
 
 
 
-  const openCreateModal = () => {
+
+
+
+
+  const openCreateModal = useCallback(() => {
 
 
     setSelectedClient(null);
@@ -157,14 +200,15 @@ function Clients() {
     setOpenModal(true);
 
 
-  };
+  }, []);
 
 
 
 
 
 
-  const openEditModal = (client) => {
+
+  const openEditModal = useCallback((client) => {
 
 
     setViewClient(null);
@@ -174,14 +218,15 @@ function Clients() {
     setOpenModal(true);
 
 
-  };
+  }, []);
 
 
 
 
 
 
-  const openViewModal = (client) => {
+
+  const openViewModal = useCallback((client) => {
 
 
     setSelectedClient(null);
@@ -191,14 +236,16 @@ function Clients() {
     setOpenModal(true);
 
 
-  };
+  }, []);
 
 
 
 
 
 
-  const closeModal = () => {
+
+
+  const closeModal = useCallback(() => {
 
 
     setOpenModal(false);
@@ -208,7 +255,7 @@ function Clients() {
     setViewClient(null);
 
 
-  };
+  }, []);
 
 
 
@@ -216,30 +263,112 @@ function Clients() {
 
 
 
-  const columns = [
+
+
+  const columns = useMemo(() => [
+
 
     {
-      key:"name",
-      label:"Cliente"
+      key: "name",
+      label: "Cliente"
     },
 
-    {
-      key:"phone",
-      label:"Teléfono"
-    },
 
     {
-      key:"address",
-      label:"Dirección"
+      key: "phone",
+      label: "Teléfono"
     },
 
+
     {
-      key:"createdAt",
-      label:"Fecha"
+      key: "address",
+      label: "Dirección"
+    },
+
+
+    {
+      key: "createdAt",
+      label: "Fecha"
     }
-     
-    
-  ];
+
+
+  ], []);
+
+
+
+
+
+
+
+
+
+  const renderActions = useCallback((client) => (
+
+    <div className="table-actions">
+
+
+      <ButtonIcon
+
+        icon={<Eye size={18} />}
+
+        type="default"
+
+        title="Ver cliente"
+
+        onClick={() =>
+          openViewModal(client)
+        }
+
+      />
+
+
+
+      <ButtonIcon
+
+        icon={<Pencil size={18} />}
+
+        type="edit"
+
+        title="Editar cliente"
+
+        onClick={() =>
+          openEditModal(client)
+        }
+
+      />
+
+
+
+      <ButtonIcon
+
+        icon={<Trash2 size={18} />}
+
+        type="delete"
+
+        title="Eliminar cliente"
+
+        onClick={() =>
+          handleDelete(client.id)
+        }
+
+      />
+
+
+    </div>
+
+
+  ), [
+
+    openViewModal,
+
+    openEditModal,
+
+    handleDelete
+
+  ]);
+
+
+
 
 
 
@@ -252,6 +381,7 @@ function Clients() {
 
 
       <Sidebar />
+
 
 
       <div className="dashboard-main">
@@ -285,6 +415,7 @@ function Clients() {
 
 
 
+
             <button
 
               className="add-client-button"
@@ -299,8 +430,8 @@ function Clients() {
             </button>
 
 
-
           </div>
+
 
 
 
@@ -310,13 +441,15 @@ function Clients() {
           {
             loading ? (
 
+
               <p>
                 Cargando clientes...
               </p>
 
 
+
             ) : (
-             
+
 
               <Table
 
@@ -324,87 +457,7 @@ function Clients() {
 
                 data={clients}
 
-
-                actions={(client) =>(
-
-
-                  <div
-
-                    style={{
-                      display:"flex",
-                      gap:"10px",
-                      alignItems:"center"
-                    }}
-
-                  >
-
-
-
-
-                    <ButtonIcon
-
-                      icon={
-                        <Eye size={18}/>
-                      }
-
-                      type="default"
-
-                      title="Ver cliente"
-
-                      onClick={() => {
-
-                        openViewModal(client);
-
-                      }}
-
-                    />
-
-
-                    <ButtonIcon
-                      icon={
-                        <Pencil size={18}/>
-                      }
-
-                      type="edit"
-
-                      title="Editar cliente"
-
-                      onClick={() => {
-
-                        openEditModal(client);
-
-                      }}
-                      
-                    />
-                      
-
-
-                    <ButtonIcon
-
-
-                      icon={
-                        <Trash2 size={18}/>
-                      }
-
-                      type="delete"
-
-                      title="Eliminar"
-
-                      onClick={() => {
-
-                        handleDelete(client.id);
-
-                      }}
-
-                    />
-
-
-
-
-                  </div>
-
-
-                )}
+                actions={renderActions}
 
               />
 
@@ -412,6 +465,9 @@ function Clients() {
             )
 
           }
+
+
+
 
 
 
@@ -428,21 +484,17 @@ function Clients() {
 
 
 
-      <Modal
 
+      <Modal
 
         isOpen={openModal}
 
-
         onClose={closeModal}
-
 
       >
 
 
-
         {
-
           selectedClient ? (
 
 
@@ -459,7 +511,8 @@ function Clients() {
           ) : viewClient ? (
 
 
-            <div>
+
+            <div className="client-detail">
 
 
               <h2>
@@ -469,42 +522,48 @@ function Clients() {
 
 
               <p>
-                Nombre: {viewClient.name}
+                <strong>Nombre:</strong>{" "}
+                {viewClient.name}
               </p>
 
 
 
               <p>
-                Teléfono: {viewClient.phone}
+                <strong>Teléfono:</strong>{" "}
+                {viewClient.phone || "No registrado"}
               </p>
 
 
 
               <p>
-                Correo: {viewClient.email || "No registrado"}
+                <strong>Correo:</strong>{" "}
+                {viewClient.email || "No registrado"}
               </p>
 
 
 
               <p>
-                Dirección: {viewClient.address}
+                <strong>Dirección:</strong>{" "}
+                {viewClient.address || "No registrada"}
               </p>
 
 
 
               <p>
-                Ciudad: {viewClient.city}
+                <strong>Ciudad:</strong>{" "}
+                {viewClient.city || "No registrada"}
               </p>
 
 
 
               <p>
-                Estado: {viewClient.status}
+                <strong>Estado:</strong>{" "}
+                {viewClient.status || "Activo"}
               </p>
-
 
 
             </div>
+
 
 
 
@@ -525,19 +584,19 @@ function Clients() {
 
 
 
-
       </Modal>
+
 
 
 
 
     </div>
 
-
   );
 
 
 }
+
 
 
 export default Clients;
